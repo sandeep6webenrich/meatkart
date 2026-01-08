@@ -3,14 +3,152 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-enum Role {
-  admin
-  customer
+model categories {
+  id          String     @id
+  name        String
+  slug        String     @unique
+  description String?
+  sort_order  Int        @default(0)
+  is_active   Boolean    @default(true)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime
+  products    products[]
+}
+
+model notifications {
+  id                String           @id
+  order_id          String?
+  type              NotificationType
+  recipient         String
+  status            String           @default("pending")
+  notification_data Json?
+  created_at        DateTime         @default(now())
+  orders            orders?          @relation(fields: [order_id], references: [id])
+}
+
+model order_items {
+  id          String    @id
+  order_id    String
+  product_id  String?
+  quantity    Int
+  unit_price  Decimal   @db.Decimal(10, 2)
+  total_price Decimal   @db.Decimal(10, 2)
+  created_at  DateTime  @default(now())
+  orders      orders    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  products    products? @relation(fields: [product_id], references: [id])
+}
+
+model orders {
+  id               String          @id
+  user_id          String?
+  order_number     String          @unique
+  total_amount     Decimal         @db.Decimal(10, 2)
+  status           OrderStatus     @default(pending)
+  payment_method   String
+  payment_status   String          @default("pending")
+  shipping_address Json
+  customer_info    Json
+  created_at       DateTime        @default(now())
+  updated_at       DateTime
+  notifications    notifications[]
+  order_items      order_items[]
+  users            users?          @relation(fields: [user_id], references: [id])
+  payments         payments?
+  shipments        shipments?
+}
+
+model payments {
+  id             String   @id
+  order_id       String   @unique
+  payment_method String
+  transaction_id String?
+  amount         Decimal  @db.Decimal(10, 2)
+  status         String   @default("pending")
+  payment_data   Json?
+  created_at     DateTime @default(now())
+  orders         orders   @relation(fields: [order_id], references: [id])
+}
+
+model product_images {
+  id         String   @id
+  product_id String
+  image_url  String
+  alt_text   String?
+  sort_order Int      @default(0)
+  is_primary Boolean  @default(false)
+  created_at DateTime @default(now())
+  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+model product_videos {
+  id            String   @id
+  product_id    String
+  video_url     String
+  thumbnail_url String?
+  title         String?
+  description   String?
+  sort_order    Int      @default(0)
+  created_at    DateTime @default(now())
+  products      products @relation(fields: [product_id], references: [id], onDelete: Cascade)
+}
+
+model products {
+  id               String           @id
+  name             String
+  slug             String           @unique
+  description      String
+  ingredients      String?
+  benefits         String?
+  price            Decimal          @db.Decimal(10, 2)
+  discounted_price Decimal?         @db.Decimal(10, 2)
+  stock_quantity   Int              @default(0)
+  category_id      String?
+  is_active        Boolean          @default(true)
+  created_at       DateTime         @default(now())
+  updated_at       DateTime
+  order_items      order_items[]
+  product_images   product_images[]
+  product_videos   product_videos[]
+  categories       categories?      @relation(fields: [category_id], references: [id])
+}
+
+model shipments {
+  id            String   @id
+  order_id      String   @unique
+  awb_number    String?  @unique
+  carrier       String?
+  status        String   @default("created")
+  tracking_data Json?
+  label_url     String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime
+  orders        orders   @relation(fields: [order_id], references: [id])
+}
+
+model users {
+  id            String   @id
+  email         String   @unique
+  password_hash String
+  name          String
+  phone         String?
+  role          Role     @default(customer)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime
+  orders        orders[]
+}
+
+enum NotificationType {
+  order_created
+  payment_success
+  payment_failed
+  shipping_update
+  promotional
 }
 
 enum OrderStatus {
@@ -22,165 +160,7 @@ enum OrderStatus {
   returned
 }
 
-enum NotificationType {
-  order_created
-  payment_success
-  payment_failed
-  shipping_update
-  promotional
-}
-
-model User {
-  id           String    @id @default(uuid())
-  email        String    @unique
-  passwordHash String    @map("password_hash")
-  name         String
-  phone        String?
-  role         Role      @default(customer)
-  isActive     Boolean   @default(true) @map("is_active")
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-  orders       Order[]
-
-  @@map("users")
-}
-
-model Category {
-  id          String    @id @default(uuid())
-  name        String
-  slug        String    @unique
-  description String?
-  sortOrder   Int       @default(0) @map("sort_order")
-  isActive    Boolean   @default(true) @map("is_active")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  products    Product[]
-
-  @@map("categories")
-}
-
-model Product {
-  id              String         @id @default(uuid())
-  name            String
-  slug            String         @unique
-  description     String
-  ingredients     String?
-  benefits        String?
-  price           Decimal        @db.Decimal(10, 2)
-  discountedPrice Decimal?       @map("discounted_price") @db.Decimal(10, 2)
-  stockQuantity   Int            @default(0) @map("stock_quantity")
-  categoryId      String?        @map("category_id")
-  isActive        Boolean        @default(true) @map("is_active")
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @updatedAt @map("updated_at")
-  category        Category?      @relation(fields: [categoryId], references: [id])
-  images          ProductImage[]
-  videos          ProductVideo[]
-  orderItems      OrderItem[]
-
-  @@map("products")
-}
-
-model ProductImage {
-  id        String   @id @default(uuid())
-  productId String   @map("product_id")
-  imageUrl  String   @map("image_url")
-  altText   String?  @map("alt_text")
-  sortOrder Int      @default(0) @map("sort_order")
-  isPrimary Boolean  @default(false) @map("is_primary")
-  createdAt DateTime @default(now()) @map("created_at")
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@map("product_images")
-}
-
-model ProductVideo {
-  id           String   @id @default(uuid())
-  productId    String   @map("product_id")
-  videoUrl     String   @map("video_url")
-  thumbnailUrl String?  @map("thumbnail_url")
-  title        String?
-  description  String?
-  sortOrder    Int      @default(0) @map("sort_order")
-  createdAt    DateTime @default(now()) @map("created_at")
-  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@map("product_videos")
-}
-
-model Order {
-  id              String         @id @default(uuid())
-  userId          String?        @map("user_id")
-  orderNumber     String         @unique @map("order_number")
-  totalAmount     Decimal        @map("total_amount") @db.Decimal(10, 2)
-  status          OrderStatus    @default(pending)
-  paymentMethod   String         @map("payment_method")
-  paymentStatus   String         @default("pending") @map("payment_status")
-  shippingAddress Json           @map("shipping_address")
-  customerInfo    Json           @map("customer_info")
-  createdAt       DateTime       @default(now()) @map("created_at")
-  updatedAt       DateTime       @updatedAt @map("updated_at")
-  user            User?          @relation(fields: [userId], references: [id])
-  items           OrderItem[]
-  payment         Payment?
-  shipment        Shipment?
-  notifications   Notification[]
-
-  @@map("orders")
-}
-
-model OrderItem {
-  id         String   @id @default(uuid())
-  orderId    String   @map("order_id")
-  productId  String?  @map("product_id")
-  quantity   Int
-  unitPrice  Decimal  @map("unit_price") @db.Decimal(10, 2)
-  totalPrice Decimal  @map("total_price") @db.Decimal(10, 2)
-  createdAt  DateTime @default(now()) @map("created_at")
-  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product    Product? @relation(fields: [productId], references: [id])
-
-  @@map("order_items")
-}
-
-model Payment {
-  id            String   @id @default(uuid())
-  orderId       String   @unique @map("order_id")
-  paymentMethod String   @map("payment_method")
-  transactionId String?  @map("transaction_id")
-  amount        Decimal  @db.Decimal(10, 2)
-  status        String   @default("pending")
-  paymentData   Json?    @map("payment_data")
-  createdAt     DateTime @default(now()) @map("created_at")
-  order         Order    @relation(fields: [orderId], references: [id])
-
-  @@map("payments")
-}
-
-model Shipment {
-  id           String   @id @default(uuid())
-  orderId      String   @unique @map("order_id")
-  awbNumber    String?  @unique @map("awb_number")
-  carrier      String?
-  status       String   @default("created")
-  trackingData Json?    @map("tracking_data")
-  labelUrl     String?  @map("label_url")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  order        Order    @relation(fields: [orderId], references: [id])
-
-  @@map("shipments")
-}
-
-model Notification {
-  id               String           @id @default(uuid())
-  orderId          String?          @map("order_id")
-  type             NotificationType
-  recipient        String
-  status           String           @default("pending")
-  notificationData Json?            @map("notification_data")
-  createdAt        DateTime         @default(now()) @map("created_at")
-  order            Order?           @relation(fields: [orderId], references: [id])
-
-  @@map("notifications")
+enum Role {
+  admin
+  customer
 }
