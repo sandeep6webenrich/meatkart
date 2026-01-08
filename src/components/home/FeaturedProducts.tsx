@@ -24,11 +24,17 @@ export default async function FeaturedProducts() {
           <div className="w-20 h-1 bg-green-500 mx-auto rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {products.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-stone-500">
+            No featured products available right now.
+          </div>
+        )}
 
         <div className="text-center mt-12">
           <Link 
