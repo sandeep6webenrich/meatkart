@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/product/ProductCard';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+
 async function getCategoryWithProducts(slug: string) {
   const category = await prisma.category.findUnique({
     where: { slug },

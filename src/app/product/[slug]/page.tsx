@@ -11,6 +11,8 @@ interface ProductPageProps {
 
 import ProductDisclaimer from '@/components/product/ProductDisclaimer';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }: ProductPageProps) {
   const { slug } = await params;
   const product = await prisma.product.findUnique({

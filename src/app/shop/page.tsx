@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/product/ProductCard';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Shop All | United Healthcare',
   description: 'Browse our complete collection of natural herbal products.',
