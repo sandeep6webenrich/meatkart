@@ -1,6 +1,15 @@
 import Link from 'next/link'
+import prisma from '@/lib/prisma'
 
-export default function Home() {
+export default async function Home() {
+  const products = await prisma.product.findMany({
+    take: 4,
+    where: { isActive: true },
+    include: {
+      productImages: { where: { isPrimary: true }, take: 1 }
+    }
+  });
+
   return (
     <>
       {/* Categories */}
@@ -86,57 +95,29 @@ export default function Home() {
           </div>
         </div>
         <div className="container">
-          {/* Static products from HTML, replicated 4 times in row 1, 4 in row 2 */}
-          {/* Item 1 */}
-          <div className="col-md-3 col-sm-12 col-xs-12 items">
-            <div className="col-md-12  sellars-items ">
-              <Link href="/product/1"><img src="/images/sell-1.png" /></Link>
-              <h3>Pre-Spiced Frozen Chicken Cutlets,Halal Cut </h3>
-              <p className="more-info "><a href="" className="border-right"><span>Add to Wishlist</span></a><Link href="/product/1" className="border-left">More Info</Link></p>
+          {products.map((product) => (
+            <div className="col-md-3 col-sm-12 col-xs-12 items" key={product.id}>
+              <div className="col-md-12  sellars-items ">
+                <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`}>
+                  <img src={product.productImages[0]?.imageUrl || "/images/no-image.png"} alt={product.name} />
+                </Link>
+                <h3>{product.name}</h3>
+                <p className="more-info ">
+                  <a href="" className="border-right"><span>Add to Wishlist</span></a>
+                  <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`} className="border-left">More Info</Link>
+                </p>
+              </div>
+              <div className="col-md-12 add-bag ">
+                <p><a href="">Add To bag</a></p>
+              </div>
             </div>
-            <div className="col-md-12 add-bag ">
-              <p><a href="">Add To bag</a></p>
-            </div>
-          </div>
-          {/* Item 2 */}
-          <div className="col-md-3 col-sm-12 col-xs-12 items ">
-            <div className="col-md-12  sellars-items ">
-              <Link href="/product/2"><img src="/images/sell-2.png" /></Link>
-              <h3>Fresh Curry Cut Chicken </h3>
-              <p className="more-info "><a href="" className="border-right"><span>Add to Wishlist</span></a><Link href="/product/2" className="border-left">More Info</Link></p>
-            </div>
-            <div className="col-md-12 add-bag ">
-              <p><a href="">Add To bag</a></p>
-            </div>
-          </div>
-          {/* Item 3 */}
-          <div className="col-md-3 col-sm-12 col-xs-12 items ">
-            <div className="col-md-12 sellars-items ">
-              <Link href="/product/3"><img src="/images/sell-3.png" /></Link>
-              <h3>Special Lamb Mutton Boneless Halal Cut </h3>
-              <p className="more-info "><a href="" className="border-right"><span>Add to Wishlist</span></a><Link href="/product/3" className="border-left">More Info</Link></p>
-            </div>
-            <div className="col-md-12 add-bag">
-              <p><a href="">Add To bag</a></p>
-            </div>
-          </div>
-          {/* Item 4 */}
-          <div className="col-md-3  col-sm-12 col-xs-12 items ">
-            <div className="col-md-12  sellars-items ">
-              <Link href="/product/4"><img src="/images/sell-4.png" /></Link>
-              <h3>Pre-Spiced Andhra Tawa Fish Party Pack </h3>
-              <p className="more-info "><a href="" className="border-right"><span>Add to Wishlist</span></a><Link href="/product/4" className="border-left">More Info</Link></p>
-            </div>
-            <div className="col-md-12 add-bag ">
-              <p><a href="">Add To bag</a></p>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Video Banner */}
         <div className="container">
           <div className="recipe-videos col-md-12 no-gutter">
-            <a href=""><img src="/images/video-delicious.png" /></a>
+            <a href=""><img src="/images/video-delicious.png" alt="video" /></a>
           </div>
         </div>
 
