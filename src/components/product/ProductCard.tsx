@@ -1,65 +1,90 @@
-import Link from 'next/link';
-import { ShoppingCart, Star } from 'lucide-react';
-import { Product, ProductImage, Category } from '@prisma/client';
+'use client'
 
-// Define a type that includes the relations we need
-type ProductWithRelations = Product & {
-  images: ProductImage[];
-  category: Category | null;
-};
+import Image from 'next/image'
+import Link from 'next/link'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { useCartStore } from '@/store/cart-store'
+import { toast } from 'sonner'
 
 interface ProductCardProps {
-  product: ProductWithRelations;
+  id: string
+  name: string
+  description: string
+  imageUrl: string
+  weights: {
+    id: string
+    weight: string
+    price: number
+    discountPrice?: number | null
+  }[]
+  freshnessNotes?: string | null
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ id, name, description, imageUrl, weights, freshnessNotes }: ProductCardProps) {
+  const addItem = useCartStore((state) => state.addItem)
+  
+  // Default to first weight option
+  const defaultWeight = weights[0]
+
+  const handleAddToCart = () => {
+    if (!defaultWeight) return
+
+    addItem({
+      productId: id,
+      weightId: defaultWeight.id,
+      name,
+      price: Number(defaultWeight.discountPrice || defaultWeight.price),
+      weight: defaultWeight.weight,
+      quantity: 1,
+      imageUrl,
+    })
+    toast.success('Added to cart')
+  }
+
   return (
-    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-stone-100 flex flex-col h-full">
-      <div className="relative aspect-square bg-stone-100 overflow-hidden">
-        <img 
-          src={product.images[0]?.imageUrl || 'https://via.placeholder.com/400'} 
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        {product.category && (
-          <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-stone-800 shadow-sm">
-            {product.category.name}
+    <div className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-all hover:shadow-md">
+      <Link href={`/product/${id}`} className="block relative aspect-square overflow-hidden bg-slate-100">
+        {imageUrl ? (
+          <Image
+            src={imageUrl}
+            alt={name}
+            fill
+            className="object-cover transition-transform group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-slate-400">No Image</div>
+        )}
+        {freshnessNotes && (
+          <div className="absolute top-2 left-2 rounded-full bg-green-500/90 px-2 py-0.5 text-xs font-medium text-white">
+            {freshnessNotes}
           </div>
         )}
-      </div>
-      
-      <div className="p-6 flex flex-col flex-grow">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center space-x-1">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-            ))}
-            <span className="text-xs text-stone-400 ml-1">(4.8)</span>
-          </div>
-        </div>
-
-        <Link href={`/product/${product.slug}`} className="block">
-          <h3 className="text-xl font-bold text-stone-800 mb-2 hover:text-green-600 transition-colors">
-            {product.name}
-          </h3>
+      </Link>
+      <div className="p-4">
+        <Link href={`/product/${id}`}>
+          <h3 className="text-lg font-semibold text-slate-900 group-hover:text-red-600 truncate">{name}</h3>
+          <p className="mt-1 text-sm text-slate-500 line-clamp-2">{description}</p>
         </Link>
-        
-        <p className="text-stone-500 text-sm mb-4 line-clamp-2 flex-grow">
-          {product.description}
-        </p>
-
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-stone-100">
+        <div className="mt-4 flex items-center justify-between">
           <div className="flex flex-col">
-            <span className="text-stone-400 text-xs line-through">₹{product.price.toString()}</span>
-            <span className="text-green-700 font-bold text-xl">
-              ₹{product.discountedPrice?.toString() ?? product.price.toString()}
-            </span>
+            <span className="text-sm text-slate-500">{defaultWeight?.weight}</span>
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-slate-900">
+                ₹{Number(defaultWeight?.discountPrice || defaultWeight?.price).toFixed(2)}
+              </span>
+              {defaultWeight?.discountPrice && (
+                <span className="text-sm text-slate-400 line-through">
+                  ₹{Number(defaultWeight.price).toFixed(2)}
+                </span>
+              )}
+            </div>
           </div>
-          <button className="flex items-center justify-center bg-stone-900 hover:bg-green-600 text-white p-3 rounded-full transition-colors group-hover:shadow-lg">
-            <ShoppingCart className="w-5 h-5" />
-          </button>
+          <Button size="icon" onClick={handleAddToCart} className="rounded-full">
+            <Plus className="h-5 w-5" />
+          </Button>
         </div>
       </div>
     </div>
-  );
+  )
 }
