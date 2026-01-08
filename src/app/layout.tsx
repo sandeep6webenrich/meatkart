@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import ClientLayout from "@/components/layout/ClientLayout";
 import { AuthProvider } from "@/components/providers/AuthProvider";
@@ -21,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased min-h-screen flex flex-col bg-stone-50 text-stone-900`}>
-        <Analytics />
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
         <AuthProvider>
           <ClientLayout>
             {children}
