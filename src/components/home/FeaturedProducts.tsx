@@ -3,14 +3,17 @@ import { prisma } from '@/lib/prisma';
 import ProductCard from '@/components/product/ProductCard';
 
 export default async function FeaturedProducts() {
-  const products = await prisma.product.findMany({
-    take: 3,
-    orderBy: { createdAt: 'desc' },
-    include: {
-      images: true,
-      category: true,
-    },
-  });
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      take: 3,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        images: true,
+        category: true,
+      },
+    });
+  } catch {}
 
   return (
     <section className="py-20 bg-stone-50">
