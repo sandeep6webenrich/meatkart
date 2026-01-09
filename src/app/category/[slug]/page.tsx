@@ -46,7 +46,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             <div className="col-md-12 product-list no-gutter">
               <h2>{category.name.toUpperCase()}</h2>
               <ul className="mutton-menu-list">
-                {category.products.map((product) => (
+                {category.products.map((product: any) => (
                   <li key={product.id}>
                     <span>&#9679;</span>
                     {/* Using product name as slug if no specific slug field, but we assume product search/link by ID or name-slug. 
@@ -68,7 +68,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
           
-          {category.products.map((product) => (
+          {category.products.map((product: any) => (
             <div className="col-md-3 col-sm-12 col-xs-12 items" key={product.id}>
               <div className="col-md-12  sellars-items ">
                 <div className="add-cart ">
