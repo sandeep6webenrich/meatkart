@@ -1,9 +1,5 @@
-import { LoginForm } from '@/components/auth/LoginForm'
+import { SimpleLoginForm } from '@/components/auth/SimpleLoginForm'
 
 export default function LoginPage() {
-  return (
-    <div className="tw-bg-slate-50 tw-min-h-[600px] tw-flex tw-items-center tw-justify-center tw-py-12 tw-px-4 sm:tw-px-6 lg:tw-px-8">
-      <LoginForm />
-    </div>
-  )
+  return <SimpleLoginForm />
 }

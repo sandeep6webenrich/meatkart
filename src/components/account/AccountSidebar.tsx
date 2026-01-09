@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { User, ShoppingBag, MapPin, LogOut } from 'lucide-react'
+import { User, ShoppingBag, MapPin, LogOut, Heart, Wallet, Bell } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -16,6 +16,10 @@ export function AccountSidebar() {
     { href: '/account', label: 'Overview', icon: User },
     { href: '/account/orders', label: 'My Orders', icon: ShoppingBag },
     { href: '/account/addresses', label: 'Addresses', icon: MapPin },
+    { href: '/account/wishlist', label: 'Wishlist', icon: Heart },
+    { href: '/account/wallet', label: 'Wallet', icon: Wallet },
+    { href: '/account/profile', label: 'Profile', icon: User },
+    // { href: '/account/notifications', label: 'Notifications', icon: Bell },
   ]
 
   const handleLogout = async () => {

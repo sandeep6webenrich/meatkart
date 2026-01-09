@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MobileHeader } from "@/components/layout/MobileHeader";
+import { MobileBottomNav } from "@/components/layout/MobileBottomNav";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -19,16 +21,37 @@ export default function ShopLayout({
     <html lang="en">
       <head>
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
         <link href="/css/bootstrap.min.css" rel="stylesheet" />
         <link href="/css/style.css" rel="stylesheet" type="text/css" />
         <link href="/css/mediaqueries.css" rel="stylesheet" type="text/css" />
+        <link href="/css/mobile-app.css" rel="stylesheet" type="text/css" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div className="page">
-          <Header />
-          {children}
-          <Footer />
+          {/* Desktop Header: Hidden on mobile via CSS */}
+          <div className="d-none d-md-block">
+             <Header />
+          </div>
+          
+          {/* Mobile Header: Visible only on mobile via CSS */}
+          <div className="d-block d-md-none">
+             <MobileHeader />
+          </div>
+
+          <main style={{ paddingBottom: '60px' }}>
+             {children}
+          </main>
+
+          {/* Desktop Footer: Hidden on mobile via CSS */}
+          <div className="d-none d-md-block">
+            <Footer />
+          </div>
+          
+          {/* Mobile Bottom Nav */}
+          <div className="d-block d-md-none">
+            <MobileBottomNav />
+          </div>
         </div>
         <Toaster position="top-center" />
       </body>

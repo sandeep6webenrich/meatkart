@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "../globals.css";
-import { LayoutDashboard, Package, ShoppingCart, Users, Settings, LogOut, FileBarChart, UserSquare2 } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users, Settings, FileBarChart, UserSquare2 } from "lucide-react";
 import { Toaster } from "sonner";
+import { LogoutButton } from "@/components/admin/LogoutButton";
 
 export const metadata: Metadata = {
   title: "MeatKart Admin",
@@ -19,7 +20,7 @@ export default function AdminLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div className="tw-flex tw-h-screen tw-bg-gray-50">
           {/* Sidebar */}
           <aside className="tw-w-64 tw-bg-white tw-shadow-xl tw-flex tw-flex-col tw-border-r tw-border-gray-200">
@@ -92,10 +93,7 @@ export default function AdminLayout({
               </Link>
             </nav>
             <div className="tw-p-4 tw-border-t tw-border-gray-100">
-              <button className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-w-full tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-red-600 tw-rounded-lg tw-transition-colors">
-                <LogOut size={20} />
-                <span className="tw-font-medium">Logout</span>
-              </button>
+              <LogoutButton />
             </div>
           </aside>
 

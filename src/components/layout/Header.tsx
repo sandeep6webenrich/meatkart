@@ -9,8 +9,6 @@ import { useLocationStore } from '@/store/location-store'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 
-import { LoginModal } from '@/components/auth/LoginModal'
-
 export function Header() {
   const router = useRouter()
   const items = useCartStore((state) => state.items)
@@ -98,9 +96,7 @@ export function Header() {
               {mounted && user ? (
                 <Link href="/account">My Account</Link>
               ) : (
-                <LoginModal>
-                  <a href="#" onClick={(e) => e.preventDefault()}>Login / Sign Up</a>
-                </LoginModal>
+                <Link href="/auth/login">Login</Link>
               )}
             </div>
           </div>

@@ -53,6 +53,17 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
         </div>
       </div>
 
+      <div className="tw-flex tw-gap-3">
+         <Link href={`/account/orders/${order.id}/invoice`}>
+            <Button variant="outline" className="tw-flex tw-gap-2">
+                <FileText size={16} /> Download Invoice
+            </Button>
+         </Link>
+         <Button className="tw-flex tw-gap-2">
+            <RefreshCw size={16} /> Reorder
+         </Button>
+      </div>
+
       <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-6">
         <div className="md:tw-col-span-2 tw-space-y-6">
           <Card>
