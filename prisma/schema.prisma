@@ -117,7 +117,7 @@ model CartItem {
 model Order {
   id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId         String   @map("user_id") @db.Uuid
-  orderNumber    String   @unique @map("order_number") @db.VarChar(20)
+  orderNumber    String   @unique @map("order_number") @db.VarChar(50)
   totalAmount    Decimal  @map("total_amount") @db.Decimal(10, 2)
   status         String   @default("pending") @db.VarChar(50)
   deliverySlot   String?  @map("delivery_slot") @db.VarChar(100)
