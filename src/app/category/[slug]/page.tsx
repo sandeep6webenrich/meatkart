@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function CategoryPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   let category: any = null
   try {
     category = await prisma.category.findUnique({
@@ -27,7 +27,26 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   }
 
   if (!category) {
-    notFound();
+    return (
+      <>
+        <div className="breadcrumps-bg">
+          <div className="container">
+            <ol className="breadcrumb">
+              <li><Link href="/">Home</Link></li>
+              <li className="active">Category</li>
+            </ol>
+          </div>
+        </div>
+        <section className="mutton-section ">
+          <div className="container">
+            <div className="col-md-12 text-center">
+              <h2>Category unavailable</h2>
+              <p>Please try again later.</p>
+            </div>
+          </div>
+        </section>
+      </>
+    )
   }
 
   return (

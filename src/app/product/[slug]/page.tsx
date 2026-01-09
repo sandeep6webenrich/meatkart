@@ -4,8 +4,8 @@ import ProductClient from './ProductClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function ProductPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   let product: any = null
   try {
     const allProducts = await prisma.product.findMany({
@@ -21,7 +21,26 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   }
 
   if (!product) {
-    notFound();
+    return (
+      <>
+        <div className="breadcrumps-bg">
+          <div className="container">
+            <ol className="breadcrumb">
+              <li><Link href="/">Home</Link></li>
+              <li className="active">Product</li>
+            </ol>
+          </div>
+        </div>
+        <section className="mutton-section ">
+          <div className="container">
+            <div className="col-md-12 text-center">
+              <h2>Product unavailable</h2>
+              <p>Please try again later.</p>
+            </div>
+          </div>
+        </section>
+      </>
+    )
   }
 
   const productData = {
