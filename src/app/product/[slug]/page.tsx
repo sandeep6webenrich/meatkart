@@ -1,11 +1,12 @@
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import ProductClient from './ProductClient';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let product: any = null
   try {
     const allProducts = await prisma.product.findMany({
