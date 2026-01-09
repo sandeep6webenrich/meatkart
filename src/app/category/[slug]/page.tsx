@@ -6,21 +6,25 @@ export const dynamic = 'force-dynamic';
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  
-  const category = await prisma.category.findUnique({
-    where: { slug: slug.toLowerCase() },
-    include: {
-      products: {
-        where: { isActive: true },
-        include: {
-          productImages: {
-            where: { isPrimary: true },
-            take: 1
+  let category: any = null
+  try {
+    category = await prisma.category.findUnique({
+      where: { slug: slug.toLowerCase() },
+      include: {
+        products: {
+          where: { isActive: true },
+          include: {
+            productImages: {
+              where: { isPrimary: true },
+              take: 1
+            }
           }
         }
       }
-    }
-  });
+    })
+  } catch {
+    category = null
+  }
 
   if (!category) {
     notFound();

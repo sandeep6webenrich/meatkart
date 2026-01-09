@@ -4,13 +4,18 @@ import prisma from '@/lib/prisma'
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const products = await prisma.product.findMany({
-    take: 4,
-    where: { isActive: true },
-    include: {
-      productImages: { where: { isPrimary: true }, take: 1 }
-    }
-  });
+  let products: Array<any> = []
+  try {
+    products = await prisma.product.findMany({
+      take: 4,
+      where: { isActive: true },
+      include: {
+        productImages: { where: { isPrimary: true }, take: 1 }
+      }
+    })
+  } catch {
+    products = []
+  }
 
   return (
     <>
