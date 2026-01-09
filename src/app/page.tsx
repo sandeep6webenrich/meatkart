@@ -105,13 +105,13 @@ export default async function Home() {
           {products.map((product) => (
             <div className="col-md-3 col-sm-12 col-xs-12 items" key={product.id}>
               <div className="col-md-12  sellars-items ">
-                <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`}>
+                <Link href={`/product/${product.slug}`}>
                   <img src={product.productImages[0]?.imageUrl || "/images/no-image.png"} alt={product.name} />
                 </Link>
                 <h3>{product.name}</h3>
                 <p className="more-info ">
                   <a href="" className="border-right"><span>Add to Wishlist</span></a>
-                  <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`} className="border-left">More Info</Link>
+                  <Link href={`/product/${product.slug}`} className="border-left">More Info</Link>
                 </p>
               </div>
               <div className="col-md-12 add-bag ">

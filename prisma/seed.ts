@@ -15,6 +15,7 @@ async function main() {
       products: [
         {
           name: 'Mutton Curry Cut',
+          slug: 'mutton-curry-cut',
           description: 'Mutton Curry Cut are pieces of lamb shoulder which is commonly used to make stew and is great when barbecued, stuffed & in curries.',
           freshnessNotes: 'Lamb meat is high in protein, selenium, zinc and iron. The speciality of this meat is that it has all 8 amino acids.',
           cutTypes: 'Curry Cut',
@@ -33,6 +34,7 @@ async function main() {
         },
         {
           name: 'Mutton Cubes',
+          slug: 'mutton-cubes',
           description: 'Premium mutton cubes for special dishes.',
           cutTypes: 'Cubes',
           stockQuantity: 30,
@@ -49,6 +51,7 @@ async function main() {
         },
         {
             name: 'Mutton Keema (Minced)',
+            slug: 'mutton-keema',
             description: 'Finely minced mutton.',
             cutTypes: 'Minced',
             stockQuantity: 40,
@@ -66,6 +69,7 @@ async function main() {
         },
          {
           name: 'Special Lamb Mutton Boneless Halal Cut',
+          slug: 'special-lamb-mutton-boneless',
           description: 'Boneless mutton pieces.',
           cutTypes: 'Boneless',
           stockQuantity: 25,
@@ -90,6 +94,7 @@ async function main() {
       products: [
         {
           name: 'Fresh Curry Cut Chicken',
+          slug: 'fresh-curry-cut-chicken',
           description: 'Fresh tender chicken curry cut pieces.',
           cutTypes: 'Curry Cut',
           stockQuantity: 100,
@@ -107,6 +112,7 @@ async function main() {
         },
         {
           name: 'Chicken Drumsticks',
+          slug: 'chicken-drumsticks',
           description: 'Juicy chicken drumsticks.',
           cutTypes: 'Drumsticks',
           stockQuantity: 80,
@@ -123,6 +129,7 @@ async function main() {
         },
         {
             name: 'Pre-Spiced Frozen Chicken Cutlets',
+            slug: 'chicken-cutlets',
             description: 'Ready to cook frozen chicken cutlets.',
             cutTypes: 'Cutlets',
             stockQuantity: 60,
@@ -147,6 +154,7 @@ async function main() {
         products: [
             {
                 name: 'Pre-Spiced Andhra Tawa Fish Party Pack',
+                slug: 'andhra-tawa-fish',
                 description: 'Spicy Andhra style fish party pack.',
                 cutTypes: 'Fillet',
                 stockQuantity: 20,

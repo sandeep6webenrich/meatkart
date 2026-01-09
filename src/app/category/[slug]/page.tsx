@@ -80,7 +80,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                         Let's check schema again. Product model has: id, name, description... no slug.
                         I'll assume I can find product by name matching the slugified version. 
                     */}
-                    <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`}>{product.name}</Link>
+                    <Link href={`/product/${product.slug}`}>{product.name}</Link>
                   </li>
                 ))}
               </ul>
@@ -94,7 +94,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                   <a href=""><img src="/images/add-cart-img.png" alt="add-cart" /></a>
                 </div>
                 <button className="btn btn-default add-cart-button" type="button">Add to cart</button>
-                <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`}>
+                <Link href={`/product/${product.slug}`}>
                   <img 
                     src={product.productImages[0]?.imageUrl || "/images/no-image.png"} 
                     alt={product.name} 
@@ -102,7 +102,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 </Link>
                 <h3>{product.name}</h3>
                 <p className="more-info ">
-                  <Link href={`/product/${product.name.toLowerCase().replace(/ /g, '-')}`}>More Info</Link>
+                  <Link href={`/product/${product.slug}`}>More Info</Link>
                 </p>
               </div>
             </div>

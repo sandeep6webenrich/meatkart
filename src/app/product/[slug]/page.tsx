@@ -9,14 +9,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const { slug } = await params;
   let product: any = null
   try {
-    const allProducts = await prisma.product.findMany({
+    product = await prisma.product.findUnique({
+      where: { slug: slug },
       include: {
         category: true,
         productImages: { where: { isPrimary: true }, take: 1 },
         productWeights: { where: { isActive: true } }
       }
     })
-    product = allProducts.find(p => p.name.toLowerCase().replace(/ /g, '-') === slug.toLowerCase())
   } catch {
     product = null
   }
