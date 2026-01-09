@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useCartStore } from '@/store/cart-store'
 
 type ProductWeight = {
   id: string;
@@ -22,6 +23,7 @@ type Product = {
 export default function ProductClient({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(0);
   const [selectedWeight, setSelectedWeight] = useState(product.weights[0] || { weight: 'N/A', price: 0 });
+  const addItem = useCartStore((s) => s.addItem)
 
   const incrementQty = () => setQuantity(q => q + 1);
   const decrementQty = () => setQuantity(q => q > 0 ? q - 1 : 0);
@@ -113,6 +115,26 @@ export default function ProductClient({ product }: { product: Product }) {
               <div className="share-images">
                 <a href=""><img src="/images/share-icon.png" alt="my-platter" /></a>
                 <p>Share with a Friend</p>
+              </div>
+              <div style={{ marginTop: 16 }}>
+                <button
+                  className="btn btn-default add-cart-button"
+                  type="button"
+                  onClick={() => {
+                    const qty = Math.max(1, quantity)
+                    addItem({
+                      productId: product.id,
+                      weightId: selectedWeight.id,
+                      name: product.name,
+                      price: selectedWeight.price,
+                      weight: selectedWeight.weight,
+                      quantity: qty,
+                      imageUrl: product.imageUrl,
+                    })
+                  }}
+                >
+                  Add to cart
+                </button>
               </div>
             </div>
             
