@@ -1,10 +1,9 @@
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import AddToCartButton from '@/components/product/AddToCartButton'
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Sync fix
 
 export default async function SearchPage({
   searchParams,

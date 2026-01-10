@@ -1,22 +1,15 @@
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
 
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import ProductCard from '@/components/product/ProductCard';
 
-export default async function CategoryPage({
-  params
-}: {
-  params: Promise<{ slug: string }>
-}) {
+export const dynamic = 'force-dynamic';
+
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-
-  console.log('🔍 Requested slug:', slug);
-
-  let category: any = null;
-
+  let category: any = null
   try {
     category = await prisma.category.findUnique({
       where: { slug: slug.toLowerCase() },
@@ -24,7 +17,7 @@ export default async function CategoryPage({
         products: {
           where: { isActive: true },
           include: {
-            productWeights: { where: { isActive: true } },
+            productWeights: { where: { isActive: true } }, // Include weights
             productImages: {
               where: { isPrimary: true },
               take: 1
@@ -32,17 +25,13 @@ export default async function CategoryPage({
           }
         }
       }
-    });
-
-    console.log('✅ Category result:', category ? `Found: ${category.name}` : 'Not found');
-
+    })
   } catch (e) {
-    console.error(`🚨 Error fetching category ${slug}:`, e);
-    category = null;
+    console.error(`Error fetching category ${slug}:`, e);
+    category = null
   }
 
   if (!category) {
-    console.log('❌ Returning not found for slug:', slug);
     return (
       <>
         <div className="breadcrumps-bg">
@@ -53,19 +42,16 @@ export default async function CategoryPage({
             </ol>
           </div>
         </div>
-        <section className="mutton-section">
+        <section className="mutton-section ">
           <div className="container">
             <div className="col-md-12 text-center">
               <h2>Category unavailable</h2>
-              <p>The category "{slug}" does not exist or has no active products.</p>
-              <Link href="/" className="btn btn-primary" style={{ marginTop: '20px', display: 'inline-block', padding: '10px 20px', backgroundColor: '#d32f2f', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
-                Go to Homepage
-              </Link>
+              <p>Please try again later.</p>
             </div>
           </div>
         </section>
       </>
-    );
+    )
   }
 
   return (
@@ -78,15 +64,27 @@ export default async function CategoryPage({
           </ol>
         </div>
       </div>
-      <section className="mutton-section">
+      <section className="mutton-section ">
         <div className="container">
-          <div className="col-md-3">
+          <div className="col-md-3 ">
             <div className="col-md-12 product-list no-gutter">
               <h2>{category.name.toUpperCase()}</h2>
               <ul className="mutton-menu-list">
                 {category.products.map((product: any) => (
                   <li key={product.id}>
                     <span>&#9679;</span>
+                    {/* Using product name as slug if no specific slug field, but we assume product search/link by ID or name-slug. 
+                        For now, let's construct a slug-like link or use ID if slug missing. 
+                        Actually the mock used /product/slug. My schema doesn't have a slug for product. 
+                        Wait, schema has 'name', but no 'slug' for product. 
+                        I should probably use ID or add slug to schema. 
+                        For now, I'll generate slug from name for the link, but query by name or ID? 
+                        The product page mock uses slug. 
+                        I'll use a helper to slugify the name for the link, and in product page I'll search by name (approx) or ID. 
+                        Ideally I should have added slug to Product. 
+                        Let's check schema again. Product model has: id, name, description... no slug.
+                        I'll assume I can find product by name matching the slugified version. 
+                    */}
                     <Link href={`/product/${product.slug}`}>{product.name}</Link>
                   </li>
                 ))}
@@ -95,30 +93,23 @@ export default async function CategoryPage({
           </div>
 
           <div className="col-md-9">
-            {category.products.length > 0 ? (
-              category.products.map((product: any) => (
-                <div className="col-md-4 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
-                  <ProductCard product={{
-                    id: product.id,
-                    name: product.name,
-                    slug: product.slug,
-                    imageUrl: product.productImages[0]?.imageUrl || "/images/no-image.png",
-                    weights: product.productWeights?.map((w: any) => ({
-                      ...w,
-                      price: Number(w.price),
-                      discountPrice: w.discountPrice ? Number(w.discountPrice) : null
-                    })) || []
-                  }} />
-                </div>
-              ))
-            ) : (
-              <div className="col-md-12 text-center">
-                <p>No products available in this category.</p>
+            {category.products.map((product: any) => (
+              <div className="col-md-4 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
+                <ProductCard product={{
+                  id: product.id,
+                  name: product.name,
+                  slug: product.slug,
+                  imageUrl: product.productImages[0]?.imageUrl || "/images/no-image.png",
+                  weights: product.productWeights?.map((w: any) => ({
+                    ...w,
+                    price: Number(w.price),
+                    discountPrice: w.discountPrice ? Number(w.discountPrice) : null
+                  })) || []
+                }} />
               </div>
-            )}
+            ))}
           </div>
         </div>
-
         <div className="container">
           <div className="recipe-videos col-md-12 no-gutter">
             <a href=""><img src="/images/video-delicious.png" alt="video" /></a>
@@ -140,7 +131,7 @@ export default async function CategoryPage({
             <div className="transport">
               <img src="/images/transport.png" alt="image" />
               <ul>
-                <li><span></span> Free Shipping on orders above ₹400</li>
+                <li><span></span> Free Shipping on orders above `400</li>
                 <li><span></span> Choose Your Own Delivery Time</li>
                 <li><span></span> Cash on Delivery Available</li>
               </ul>

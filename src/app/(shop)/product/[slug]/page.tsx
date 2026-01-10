@@ -1,11 +1,10 @@
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import ProductClient from './ProductClient';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Sync fix
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
