@@ -16,21 +16,21 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
   const addItem = useCartStore((s) => s.addItem)
   const items = useCartStore((s) => s.items)
   const updateQuantity = useCartStore((s) => s.updateQuantity)
-  
+
   const [mounted, setMounted] = useState(false)
-  
+
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  if (!mounted) return <button className="btn btn-default add-cart-button" disabled>Add to cart</button>
+  if (!mounted) return <button className="add-cart-button" disabled>Add to cart</button>
 
   // Check if item is already in cart (using first weight as default)
   const firstWeight = product.weights[0]
-  const cartItem = firstWeight 
+  const cartItem = firstWeight
     ? items.find(i => i.productId === product.id && i.weightId === firstWeight.id)
     : null
-  
+
   const quantity = cartItem ? cartItem.quantity : 0
 
   const handleAdd = () => {
@@ -67,10 +67,10 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
 
   if (quantity > 0) {
     return (
-      <div className="quantity-toggle" style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
+      <div className="quantity-toggle" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         gap: '10px',
         background: '#fff',
         border: '1px solid #d11243',
@@ -80,14 +80,14 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
         maxWidth: '140px',
         margin: '0 auto'
       }}>
-        <button 
+        <button
           onClick={handleDecrement}
           style={{ background: 'none', border: 'none', color: '#d11243', fontSize: '18px', fontWeight: 'bold' }}
         >
           -
         </button>
         <span style={{ fontWeight: 'bold', minWidth: '20px', textAlign: 'center' }}>{quantity}</span>
-        <button 
+        <button
           onClick={handleIncrement}
           style={{ background: 'none', border: 'none', color: '#d11243', fontSize: '18px', fontWeight: 'bold' }}
         >
@@ -97,32 +97,32 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
     )
   }
 
-  const buttonStyle = variant === 'minimal' 
-    ? { 
-        backgroundColor: '#fff', 
-        color: '#d11243', 
-        border: '1px solid #d11243',
-        borderRadius: '4px',
-        padding: '8px 16px',
-        fontWeight: 'bold',
-        width: '100%',
-        textTransform: 'uppercase' as const,
-        fontSize: '12px'
-      }
+  const buttonStyle = variant === 'minimal'
+    ? {
+      backgroundColor: '#fff',
+      color: '#d11243',
+      border: '1px solid #d11243',
+      borderRadius: '4px',
+      padding: '8px 16px',
+      fontWeight: 'bold',
+      width: '100%',
+      textTransform: 'uppercase' as const,
+      fontSize: '12px'
+    }
     : {
-        backgroundColor: '#d11243', 
-        color: '#fff', 
-        border: 'none',
-        borderRadius: '4px',
-        padding: '10px 20px',
-        fontWeight: 'bold',
-        width: '100%',
-        textTransform: 'uppercase' as const
+      backgroundColor: '#d11243',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '4px',
+      padding: '10px 20px',
+      fontWeight: 'bold',
+      width: '100%',
+      textTransform: 'uppercase' as const
     }
 
   return (
-    <button 
-      className="btn btn-default add-cart-button" 
+    <button
+      className="add-cart-button"
       type="button"
       onClick={handleAdd}
       style={buttonStyle}

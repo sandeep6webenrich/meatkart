@@ -23,11 +23,7 @@ export default function BestSellers({ products }: { products: Product[] }) {
 
   if (!mounted) return null
 
-  // Mock filtering
-  const availableProducts = products.filter(p => {
-    if (city === 'Ranigung' && p.name.includes('Chicken')) return false
-    return true
-  })
+  const availableProducts = products;
 
   return (
     <div className="container">
@@ -36,16 +32,16 @@ export default function BestSellers({ products }: { products: Product[] }) {
           <span>best-sellers in {city}</span>
         </div>
       </div>
-      
+
       <div className="row" style={{ marginTop: 20 }}>
         {availableProducts.length === 0 ? (
-           <div className="col-md-12 text-center">
-             <p>No products available in {city} at the moment.</p>
-           </div>
+          <div className="col-md-12 text-center">
+            <p>No products available in {city} at the moment.</p>
+          </div>
         ) : (
           availableProducts.map((product) => (
             <div className="col-md-3 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
-               <ProductCard product={product} />
+              <ProductCard product={product} />
             </div>
           ))
         )}

@@ -24,7 +24,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         }
       }
     })
-  } catch {
+  } catch (e) {
+    console.error(`Error fetching category ${slug}:`, e);
     category = null
   }
 
@@ -88,23 +89,23 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
               </ul>
             </div>
           </div>
-          
+
           <div className="col-md-9">
-             {category.products.map((product: any) => (
-                <div className="col-md-4 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
-                   <ProductCard product={{
-                      id: product.id,
-                      name: product.name,
-                      slug: product.slug,
-                      imageUrl: product.productImages[0]?.imageUrl || "/images/no-image.png",
-                      weights: product.productWeights?.map((w: any) => ({
-                        ...w,
-                        price: Number(w.price),
-                        discountPrice: w.discountPrice ? Number(w.discountPrice) : null
-                      })) || []
-                   }} />
-                </div>
-             ))}
+            {category.products.map((product: any) => (
+              <div className="col-md-4 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
+                <ProductCard product={{
+                  id: product.id,
+                  name: product.name,
+                  slug: product.slug,
+                  imageUrl: product.productImages[0]?.imageUrl || "/images/no-image.png",
+                  weights: product.productWeights?.map((w: any) => ({
+                    ...w,
+                    price: Number(w.price),
+                    discountPrice: w.discountPrice ? Number(w.discountPrice) : null
+                  })) || []
+                }} />
+              </div>
+            ))}
           </div>
         </div>
         <div className="container">

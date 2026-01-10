@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   let products: Array<any> = []
-  
+
   try {
     // Fetch Products
     products = await prisma.product.findMany({
@@ -17,7 +17,8 @@ export default async function Home() {
         productWeights: { where: { isActive: true } }
       }
     })
-  } catch {
+  } catch (error) {
+    console.error("Error fetching homepage products:", error);
     products = []
   }
 
@@ -112,7 +113,7 @@ export default async function Home() {
       {/* Best Sellers */}
       <section className="best-sellars">
         <BestSellers products={clientProducts} />
-        
+
         {/* Video Banner */}
         <div className="container">
           <div className="recipe-videos col-md-12 no-gutter">

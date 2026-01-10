@@ -17,7 +17,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         productWeights: { where: { isActive: true } }
       }
     })
-  } catch {
+  } catch (e) {
+    console.error(`Error fetching product ${slug}:`, e);
     product = null
   }
 

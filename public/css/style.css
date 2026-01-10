@@ -1110,3 +1110,35 @@ nav .menu li a:hover {
   float: right !important; /* Move login to far right */
   margin-top: 6px;
 }
+
+/* Add to Cart Button Styles */
+.add-cart-button {
+    background-color: #d11243;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 100%;
+}
+
+.add-cart-button:hover {
+    background-color: #a00e33;
+    color: #fff;
+    text-decoration: none;
+}
+
+.add-cart-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.btn-default.add-cart-button {
+    background-color: #d11243;
+    color: #fff;
+    border-color: #d11243;
+}
