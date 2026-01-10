@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
 import AddToCartButton from '@/components/product/AddToCartButton'
@@ -51,7 +53,7 @@ export default async function SearchPage({
         <div className="container">
           <div className="col-md-12">
             <h2 className="text-center" style={{ marginBottom: 30 }}>
-              {products.length > 0 
+              {products.length > 0
                 ? `Found ${products.length} results for "${query}"`
                 : `No results found for "${query}"`
               }
@@ -66,30 +68,30 @@ export default async function SearchPage({
                         <a href="#"><img src="/images/add-cart-img.png" alt="add-cart" /></a>
                       </div>
                       <Link href={`/product/${product.slug}`}>
-                        <img 
-                          src={product.productImages[0]?.imageUrl || "/images/no-image.png"} 
+                        <img
+                          src={product.productImages[0]?.imageUrl || "/images/no-image.png"}
                           alt={product.name}
                           style={{ height: '180px', objectFit: 'contain' }}
                         />
                       </Link>
                       <h3 style={{ minHeight: '40px' }}>{product.name}</h3>
-                      
+
                       <div className="text-center" style={{ marginBottom: 5 }}>
                         {product.productWeights && product.productWeights.length > 0 ? (
-                            (() => {
-                                const sortedWeights = [...product.productWeights].sort((a: any, b: any) => Number(a.price) - Number(b.price));
-                                const minWeight = sortedWeights[0];
-                                return (
-                                    <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#ce2c2c', margin: 0 }}>
-                                        &#8377; {Number(minWeight.price)} 
-                                        <span style={{ fontSize: '13px', color: '#777', fontWeight: 'normal', marginLeft: 5 }}>
-                                           / {minWeight.weight}
-                                        </span>
-                                    </p>
-                                )
-                            })()
+                          (() => {
+                            const sortedWeights = [...product.productWeights].sort((a: any, b: any) => Number(a.price) - Number(b.price));
+                            const minWeight = sortedWeights[0];
+                            return (
+                              <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#ce2c2c', margin: 0 }}>
+                                &#8377; {Number(minWeight.price)}
+                                <span style={{ fontSize: '13px', color: '#777', fontWeight: 'normal', marginLeft: 5 }}>
+                                  / {minWeight.weight}
+                                </span>
+                              </p>
+                            )
+                          })()
                         ) : (
-                             <p style={{ color: '#999' }}>Unavailable</p>
+                          <p style={{ color: '#999' }}>Unavailable</p>
                         )}
                       </div>
 
