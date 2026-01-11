@@ -20,24 +20,24 @@ export function MobileHeader() {
   }
 
   return (
-    <div className="mobile-header">
+    <div className="mobile-header" style={{ background: '#fff', zIndex: 1000 }}>
       <div className="mobile-header-top">
         <div className="mobile-logo">
           <Link href="/">
-             <img src="/images/logo.png" alt="MeatKart" style={{ height: '32px' }} />
+            <img src="/images/logo.png" alt="MeatKart" style={{ height: '32px' }} />
           </Link>
         </div>
-        
+
         <div className="mobile-location">
-          <button 
+          <button
             className="location-btn"
             onClick={() => setLocationOpen(!locationOpen)}
           >
-            <MapPin size={16} className="text-primary" />
+            <MapPin size={16} style={{ color: '#f25648', marginRight: '4px' }} />
             <span className="location-text">{mounted ? city : 'Location'}</span>
             <span className="caret"></span>
           </button>
-          
+
           {locationOpen && (
             <div className="mobile-location-dropdown">
               <button onClick={() => handleCitySelect('Hyderabad')}>Hyderabad</button>

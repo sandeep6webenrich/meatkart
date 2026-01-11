@@ -68,7 +68,7 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
   if (quantity > 0) {
     return (
       <div className="quantity-toggle" style={{
-        display: 'flex',
+        display: 'flex !important' as any,
         alignItems: 'center',
         justifyContent: 'center',
         gap: '10px',
@@ -99,6 +99,7 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
 
   const buttonStyle = variant === 'minimal'
     ? {
+      display: 'block',
       backgroundColor: '#fff',
       color: '#d11243',
       border: '1px solid #d11243',
@@ -107,9 +108,11 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
       fontWeight: 'bold',
       width: '100%',
       textTransform: 'uppercase' as const,
-      fontSize: '12px'
+      fontSize: '12px',
+      cursor: 'pointer'
     }
     : {
+      display: 'block',
       backgroundColor: '#d11243',
       color: '#fff',
       border: 'none',
@@ -117,7 +120,8 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
       padding: '10px 20px',
       fontWeight: 'bold',
       width: '100%',
-      textTransform: 'uppercase' as const
+      textTransform: 'uppercase' as const,
+      cursor: 'pointer'
     }
 
   return (

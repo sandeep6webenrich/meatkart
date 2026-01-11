@@ -83,7 +83,7 @@ We have created an automated script `setup-ec2.sh` to install Node.js, Nginx, an
     npm run build
     ```
 
-6.  **Start Application**:
+5.  **Start Application**:
     ```bash
     pm2 start npm --name "meatkart" -- start
     pm2 save

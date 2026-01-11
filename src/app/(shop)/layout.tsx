@@ -29,27 +29,28 @@ export default function ShopLayout({
       </head>
       <body suppressHydrationWarning>
         <div className="page">
-          {/* Desktop Header: Hidden on mobile via CSS */}
-          <div className="d-none d-md-block">
-             <Header />
+          {/* Desktop Header: Hidden on mobile via CSS (Bootstrap 3) */}
+          <div className="hidden-xs">
+            <Header />
           </div>
-          
-          {/* Mobile Header: Visible only on mobile via CSS */}
-          <div className="d-block d-md-none">
-             <MobileHeader />
+
+          {/* Mobile Header: Visible only on mobile via CSS (Bootstrap 3) */}
+          <div className="visible-xs">
+            <MobileHeader />
+            <div style={{ height: '60px' }}></div> {/* Spacer for fixed header */}
           </div>
 
           <main style={{ paddingBottom: '60px' }}>
-             {children}
+            {children}
           </main>
 
           {/* Desktop Footer: Hidden on mobile via CSS */}
           <div className="d-none d-md-block">
             <Footer />
           </div>
-          
+
           {/* Mobile Bottom Nav */}
-          <div className="d-block d-md-none">
+          <div className="visible-xs">
             <MobileBottomNav />
           </div>
         </div>
