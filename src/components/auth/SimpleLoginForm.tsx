@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -22,6 +22,10 @@ export function SimpleLoginForm() {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') || '/'
+  const message = searchParams.get('message')
+  
   const supabase = useMemo(() => {
     try {
       return createClient()
@@ -52,7 +56,7 @@ export function SimpleLoginForm() {
         return
       }
       toast.success('Successfully logged in')
-      router.push('/')
+      router.push(redirect)
       router.refresh()
     } catch (error: any) {
       setErrorMsg(error.message || 'Something went wrong')
@@ -70,6 +74,11 @@ export function SimpleLoginForm() {
         </div>
         <h3 className="tw-text-4xl tw-font-bold tw-text-gray-900 tw-mb-4">Sign in</h3>
         <p className="tw-text-gray-600 tw-text-lg tw-mb-8">Use your email and password.</p>
+        {message && (
+          <div className="tw-bg-blue-50 tw-border tw-border-blue-200 tw-text-blue-700 tw-px-5 tw-py-4 tw-rounded-lg tw-mb-8 tw-text-base">
+            {message}
+          </div>
+        )}
         {errorMsg && (
           <div className="tw-bg-red-50 tw-border tw-border-red-200 tw-text-red-600 tw-px-5 tw-py-4 tw-rounded-lg tw-mb-8 tw-text-base">
             {errorMsg}

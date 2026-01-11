@@ -1,10 +1,12 @@
 import prisma from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
+import { CreateUserDialog, UserActions } from "@/components/admin/UserDialogs";
 
 export const dynamic = 'force-dynamic';
 
 export default async function UsersPage() {
   const users = await prisma.user.findMany({
+    where: { role: 'admin' },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -12,6 +14,7 @@ export default async function UsersPage() {
     <div className="tw-space-y-6">
       <div className="tw-flex tw-items-center tw-justify-between">
         <h1 className="tw-text-3xl tw-font-bold tw-text-gray-900">Users</h1>
+        <CreateUserDialog />
       </div>
 
       <div className="tw-bg-white tw-rounded-xl tw-shadow-sm tw-border tw-overflow-hidden">
@@ -24,12 +27,13 @@ export default async function UsersPage() {
                 <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Phone</th>
                 <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Role</th>
                 <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Joined</th>
+                <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Actions</th>
               </tr>
             </thead>
             <tbody className="tw-divide-y">
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="tw-px-6 tw-py-8 tw-text-center tw-text-gray-500">
+                  <td colSpan={6} className="tw-px-6 tw-py-8 tw-text-center tw-text-gray-500">
                     No users found.
                   </td>
                 </tr>
@@ -46,16 +50,18 @@ export default async function UsersPage() {
                       {user.phone}
                     </td>
                     <td className="tw-px-6 tw-py-4">
-                      <span className={`tw-px-2.5 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium tw-capitalize ${
-                        user.role === 'admin' 
-                          ? 'tw-bg-purple-100 tw-text-purple-800' 
-                          : 'tw-bg-blue-100 tw-text-blue-800'
-                      }`}>
+                      <span className={`tw-px-2.5 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium tw-capitalize ${user.role === 'admin'
+                        ? 'tw-bg-purple-100 tw-text-purple-800'
+                        : 'tw-bg-blue-100 tw-text-blue-800'
+                        }`}>
                         {user.role}
                       </span>
                     </td>
                     <td className="tw-px-6 tw-py-4 tw-text-gray-600">
                       {new Date(user.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="tw-px-6 tw-py-4 tw-text-gray-600">
+                      <UserActions user={user} />
                     </td>
                   </tr>
                 ))

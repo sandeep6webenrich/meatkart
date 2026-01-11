@@ -49,7 +49,9 @@ export default async function CustomersPage() {
                 customers.map((customer) => (
                   <tr key={customer.id} className="hover:tw-bg-gray-50 tw-transition-colors">
                     <td className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900">
-                      {customer.name}
+                      <a href={`/admin/customers/${customer.id}`} className="hover:tw-text-primary hover:tw-underline tw-block tw-w-full tw-h-full">
+                        {customer.name}
+                      </a>
                     </td>
                     <td className="tw-px-6 tw-py-4 tw-text-gray-600">
                       <div>{customer.email}</div>
@@ -59,7 +61,7 @@ export default async function CustomersPage() {
                       {customer._count.orders}
                     </td>
                     <td className="tw-px-6 tw-py-4 tw-text-gray-600">
-                      {customer.orders[0] 
+                      {customer.orders[0]
                         ? (
                           <div>
                             <div>{new Date(customer.orders[0].createdAt).toLocaleDateString()}</div>
