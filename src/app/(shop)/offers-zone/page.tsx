@@ -1,7 +1,7 @@
 
 import Link from 'next/link'
 import prisma from '@/lib/prisma'
-import { ProductCard } from '@/components/product/ProductCard'
+import ProductCard from '@/components/product/ProductCard'
 
 export const dynamic = 'force-dynamic'; // Sync fix
 
@@ -26,6 +26,7 @@ export default async function OffersZonePage() {
   const products = discountedProducts.map(p => ({
     id: p.id,
     name: p.name,
+    slug: p.slug,
     description: p.description || '',
     imageUrl: p.productImages[0]?.imageUrl || "/images/no-image.png",
     weights: p.productWeights.map(w => ({
@@ -118,7 +119,7 @@ export default async function OffersZonePage() {
             {products.length > 0 ? (
               products.map(product => (
                 <div className="col-md-3 col-sm-6 col-xs-12" style={{ marginBottom: '30px' }} key={product.id}>
-                  <ProductCard {...product} />
+                  <ProductCard product={product} />
                 </div>
               ))
             ) : (
