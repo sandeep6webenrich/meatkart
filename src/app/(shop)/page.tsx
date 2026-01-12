@@ -64,7 +64,10 @@ export default async function Home() {
             </div>
             <div className="col-md-3 images">
               <div className="category-images-video">
-                <iframe width="280" height="190" src="https://www.youtube.com/embed/QaTywtSq7TA" frameBorder="0" allowFullScreen></iframe>
+                {/* Video removed due to playback issues */}
+                <div style={{ background: '#f5f5f5', height: '190px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '8px' }}>
+                  <img src="/images/logo.png" alt="MeatKart" style={{ height: '40px', opacity: 0.5 }} />
+                </div>
               </div>
             </div>
             <div className="col-md-3 col-sm-12 col-xs-12 images">

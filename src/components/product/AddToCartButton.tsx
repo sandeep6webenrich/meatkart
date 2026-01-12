@@ -67,29 +67,17 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
 
   if (quantity > 0) {
     return (
-      <div className="quantity-toggle" style={{
-        display: 'flex !important' as any,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '10px',
-        background: '#fff',
-        border: '1px solid #d11243',
-        borderRadius: '4px',
-        padding: '5px 10px',
-        width: '100%',
-        maxWidth: '140px',
-        margin: '0 auto'
-      }}>
+      <div className="tw-flex tw-items-center tw-justify-center tw-gap-3 tw-bg-white tw-border tw-border-primary tw-rounded-lg tw-px-2 tw-py-1 tw-w-full tw-max-w-[140px] tw-mx-auto">
         <button
           onClick={handleDecrement}
-          style={{ background: 'none', border: 'none', color: '#d11243', fontSize: '18px', fontWeight: 'bold' }}
+          className="tw-bg-transparent tw-border-none tw-text-primary tw-text-lg tw-font-bold tw-px-2 hover:tw-bg-red-50 tw-rounded"
         >
           -
         </button>
-        <span style={{ fontWeight: 'bold', minWidth: '20px', textAlign: 'center' }}>{quantity}</span>
+        <span className="tw-font-bold tw-min-w-[20px] tw-text-center tw-text-gray-900">{quantity}</span>
         <button
           onClick={handleIncrement}
-          style={{ background: 'none', border: 'none', color: '#d11243', fontSize: '18px', fontWeight: 'bold' }}
+          className="tw-bg-transparent tw-border-none tw-text-primary tw-text-lg tw-font-bold tw-px-2 hover:tw-bg-red-50 tw-rounded"
         >
           +
         </button>
@@ -97,39 +85,14 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
     )
   }
 
-  const buttonStyle = variant === 'minimal'
-    ? {
-      display: 'block',
-      backgroundColor: '#fff',
-      color: '#d11243',
-      border: '1px solid #d11243',
-      borderRadius: '4px',
-      padding: '8px 16px',
-      fontWeight: 'bold',
-      width: '100%',
-      textTransform: 'uppercase' as const,
-      fontSize: '12px',
-      cursor: 'pointer'
-    }
-    : {
-      display: 'block',
-      backgroundColor: '#d11243',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '4px',
-      padding: '10px 20px',
-      fontWeight: 'bold',
-      width: '100%',
-      textTransform: 'uppercase' as const,
-      cursor: 'pointer'
-    }
-
   return (
     <button
-      className="add-cart-button"
+      className={`tw-block tw-w-full tw-rounded-lg tw-px-5 tw-py-2.5 tw-font-bold tw-uppercase tw-text-sm tw-transition-colors ${variant === 'minimal'
+          ? 'tw-bg-white tw-text-primary tw-border tw-border-primary hover:tw-bg-red-50'
+          : 'tw-bg-primary tw-text-white tw-border-none hover:tw-bg-red-600'
+        }`}
       type="button"
       onClick={handleAdd}
-      style={buttonStyle}
     >
       Add to cart
     </button>

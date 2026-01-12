@@ -40,7 +40,7 @@ export default function BestSellers({ products }: { products: Product[] }) {
           </div>
         ) : (
           availableProducts.map((product) => (
-            <div className="col-md-3 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
+            <div className="col-md-3 col-sm-6 col-xs-6" key={product.id} style={{ marginBottom: 30 }}>
               <ProductCard product={product} />
             </div>
           ))

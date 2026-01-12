@@ -18,7 +18,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   useEffect(() => {
     // Check if mobile on mount and resize
-    const checkMobile = () => setIsMobile(window.innerWidth < 768)
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024) // Increased breakpoint for tablet support
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -81,10 +81,10 @@ export default function ProductCard({ product }: { product: Product }) {
           left: '50%',
           transform: 'translateX(-50%)',
           width: 'calc(100% - 30px)',
-          opacity: showButton ? 1 : 0,
-          visibility: showButton ? 'visible' : 'hidden',
+          opacity: showButton || isMobile ? 1 : 0,
+          visibility: showButton || isMobile ? 'visible' : 'hidden',
           transition: 'opacity 0.3s ease, visibility 0.3s ease',
-          pointerEvents: showButton ? 'auto' : 'none',
+          pointerEvents: showButton || isMobile ? 'auto' : 'none',
           zIndex: 10
         }}>
           <AddToCartButton product={product} variant="minimal" />
