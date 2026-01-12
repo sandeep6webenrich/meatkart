@@ -26,6 +26,7 @@ export default function ShopLayout({
         <link href="/css/style.css" rel="stylesheet" type="text/css" />
         <link href="/css/mediaqueries.css" rel="stylesheet" type="text/css" />
         <link href="/css/mobile-app.css" rel="stylesheet" type="text/css" />
+        <link href="/css/mobile-responsive.css" rel="stylesheet" type="text/css" />
       </head>
       <body suppressHydrationWarning>
         <div className="page">
