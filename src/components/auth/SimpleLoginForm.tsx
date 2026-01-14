@@ -18,14 +18,18 @@ const emailSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
-export function SimpleLoginForm() {
+interface SimpleLoginFormProps {
+  onSuccess?: () => void;
+}
+
+export function SimpleLoginForm({ onSuccess }: SimpleLoginFormProps) {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/'
   const message = searchParams.get('message')
-  
+
   const supabase = useMemo(() => {
     try {
       return createClient()
@@ -56,8 +60,12 @@ export function SimpleLoginForm() {
         return
       }
       toast.success('Successfully logged in')
-      router.push(redirect)
-      router.refresh()
+      if (onSuccess) {
+        onSuccess()
+      } else {
+        router.push(redirect)
+        router.refresh()
+      }
     } catch (error: any) {
       setErrorMsg(error.message || 'Something went wrong')
       toast.error('Something went wrong. Please try again.')
@@ -112,6 +120,11 @@ export function SimpleLoginForm() {
             {emailForm.formState.errors.password && (
               <p className="tw-text-sm tw-text-red-500 tw-mt-1">{emailForm.formState.errors.password.message}</p>
             )}
+            <div className="tw-flex tw-justify-end">
+              <Link href="/auth/forgot-password" className="tw-text-primary tw-font-medium tw-text-sm hover:tw-underline">
+                Forgot Password?
+              </Link>
+            </div>
           </div>
           <Button type="submit" className="tw-w-full tw-h-16 tw-bg-primary tw-hover:bg-red-700 tw-text-white tw-text-xl tw-font-semibold tw-rounded-xl tw-shadow-2xl tw-transition-all" disabled={loading}>
             {loading ? <Loader2 className="tw-mr-2 tw-h-7 tw-w-7 tw-animate-spin" /> : 'Sign In'}

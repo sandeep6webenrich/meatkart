@@ -24,7 +24,8 @@ const productSchema = z.object({
     price: z.coerce.number().min(0),
     discountPrice: z.coerce.number().min(0).optional(),
     isActive: z.boolean().default(true),
-  }))
+  })),
+  locationIds: z.array(z.string()).optional()
 })
 
 export type ProductFormState = {
@@ -45,6 +46,7 @@ export async function createProduct(prevState: ProductFormState, formData: FormD
   // Parse complex data from JSON strings in hidden fields
   const images = JSON.parse(formData.get('images') as string || '[]')
   const weights = JSON.parse(formData.get('weights') as string || '[]')
+  const locationIds = JSON.parse(formData.get('locationIds') as string || '[]')
 
   const validatedFields = productSchema.safeParse({
     name: formData.get('name'),
@@ -56,6 +58,7 @@ export async function createProduct(prevState: ProductFormState, formData: FormD
     isActive: formData.get('isActive') === 'on',
     images,
     weights,
+    locationIds,
   })
 
   if (!validatedFields.success) {
@@ -91,6 +94,9 @@ export async function createProduct(prevState: ProductFormState, formData: FormD
             discountPrice: w.discountPrice,
             isActive: w.isActive
           }))
+        },
+        locations: {
+          connect: data.locationIds ? data.locationIds.map(id => ({ id })) : []
         }
       },
     })
@@ -119,6 +125,7 @@ export async function updateProduct(
 
   const images = JSON.parse(formData.get('images') as string || '[]')
   const weights = JSON.parse(formData.get('weights') as string || '[]')
+  const locationIds = JSON.parse(formData.get('locationIds') as string || '[]')
 
   const validatedFields = productSchema.safeParse({
     name: formData.get('name'),
@@ -130,6 +137,7 @@ export async function updateProduct(
     isActive: formData.get('isActive') === 'on',
     images,
     weights,
+    locationIds,
   })
 
   if (!validatedFields.success) {
@@ -182,6 +190,18 @@ export async function updateProduct(
             discountPrice: w.discountPrice,
             isActive: w.isActive
           }))
+        })
+      }
+
+      // Handle Locations
+      if (data.locationIds) {
+        await tx.product.update({
+          where: { id },
+          data: {
+            locations: {
+              set: data.locationIds.map(id => ({ id }))
+            }
+          }
         })
       }
     })

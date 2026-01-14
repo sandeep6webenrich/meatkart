@@ -64,6 +64,7 @@ export default function ProductClient({ product }: { product: Product }) {
   };
 
   const handleAddToPlatter = async () => {
+    // Check if user is logged in (optional, but good for UX before calling server action)
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -73,11 +74,12 @@ export default function ProductClient({ product }: { product: Product }) {
     }
 
     try {
-      let platters = await getPlatters(user.id);
+      // Get platters (server action uses session)
+      let platters = await getPlatters();
       let targetPlatterId;
 
       if (platters.length === 0) {
-        const result = await createPlatter(user.id, 'My Weekly Platter');
+        const result = await createPlatter('My Weekly Platter');
         if (result.success && result.platter) {
           targetPlatterId = result.platter.id;
         } else {

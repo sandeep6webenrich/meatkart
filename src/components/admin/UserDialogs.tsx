@@ -97,6 +97,8 @@ export function CreateUserDialog() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="customer">Customer</SelectItem>
+                                <SelectItem value="editor">Editor</SelectItem>
+                                <SelectItem value="manager">Manager</SelectItem>
                                 <SelectItem value="admin">Admin</SelectItem>
                             </SelectContent>
                         </Select>
@@ -165,10 +167,22 @@ export function UserActions({ user }: { user: any }) {
                     Copy User ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleRoleUpdate(user.role === 'admin' ? 'customer' : 'admin')}>
-                    <Pencil className="tw-mr-2 tw-h-4 tw-w-4" />
-                    {user.role === 'admin' ? 'Demote to Customer' : 'Make Admin'}
+
+                <DropdownMenuLabel className="tw-text-xs tw-text-gray-500">Change Role</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => handleRoleUpdate('customer')} disabled={user.role === 'customer'}>
+                    Customer
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleUpdate('editor')} disabled={user.role === 'editor'}>
+                    Editor
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleUpdate('manager')} disabled={user.role === 'manager'}>
+                    Manager
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleUpdate('admin')} disabled={user.role === 'admin'}>
+                    Admin
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleDelete} className="tw-text-red-600">
                     <Trash2 className="tw-mr-2 tw-h-4 tw-w-4" />
                     Delete User

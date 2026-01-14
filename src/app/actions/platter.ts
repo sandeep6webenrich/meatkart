@@ -10,16 +10,16 @@ const platterSchema = z.object({
     userId: z.string().uuid()
 })
 
-export async function getPlatters(userId: string) {
-    // SECURITY: Verify the requesting user matches the userId
+export async function getPlatters() {
+    // SECURITY: Use session user
     const currentUser = await getCurrentUser()
-    if (!currentUser || currentUser.id !== userId) {
+    if (!currentUser) {
         return []
     }
 
     try {
         const platters = await prisma.platter.findMany({
-            where: { userId },
+            where: { userId: currentUser.id },
             include: {
                 items: {
                     include: {
@@ -44,10 +44,10 @@ export async function getPlatters(userId: string) {
     }
 }
 
-export async function createPlatter(userId: string, name: string) {
-    // SECURITY: Verify the requesting user matches the userId
+export async function createPlatter(name: string) {
+    // SECURITY: Use session user
     const currentUser = await getCurrentUser()
-    if (!currentUser || currentUser.id !== userId) {
+    if (!currentUser) {
         return { success: false, error: 'Unauthorized' }
     }
 
@@ -55,7 +55,7 @@ export async function createPlatter(userId: string, name: string) {
         const platter = await prisma.platter.create({
             data: {
                 name,
-                userId
+                userId: currentUser.id
             }
         })
         revalidatePath('/platter')

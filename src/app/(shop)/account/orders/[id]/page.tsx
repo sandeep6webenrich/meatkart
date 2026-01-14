@@ -6,7 +6,7 @@ import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, MapPin, CreditCard, Package } from 'lucide-react'
+import { ArrowLeft, MapPin, CreditCard, Package, FileText, RefreshCw } from 'lucide-react'
 import { format } from 'date-fns'
 
 export const dynamic = 'force-dynamic';
@@ -19,7 +19,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
   if (!authUser?.email) redirect('/auth/login')
 
   const order = await prisma.order.findFirst({
-    where: { 
+    where: {
       id,
       user: { email: authUser.email } // Ensure user owns the order
     },
@@ -54,14 +54,14 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
       </div>
 
       <div className="tw-flex tw-gap-3">
-         <Link href={`/account/orders/${order.id}/invoice`}>
-            <Button variant="outline" className="tw-flex tw-gap-2">
-                <FileText size={16} /> Download Invoice
-            </Button>
-         </Link>
-         <Button className="tw-flex tw-gap-2">
-            <RefreshCw size={16} /> Reorder
-         </Button>
+        <Link href={`/account/orders/${order.id}/invoice`}>
+          <Button variant="outline" className="tw-flex tw-gap-2">
+            <FileText size={16} /> Download Invoice
+          </Button>
+        </Link>
+        <Button className="tw-flex tw-gap-2">
+          <RefreshCw size={16} /> Reorder
+        </Button>
       </div>
 
       <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-6">
@@ -75,7 +75,7 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
                 <div key={item.id} className="tw-flex tw-items-center tw-justify-between tw-border-b tw-pb-4 last:tw-border-0 last:tw-pb-0">
                   <div className="tw-flex tw-items-center tw-gap-4">
                     <div className="tw-h-16 tw-w-16 tw-bg-gray-100 tw-rounded-lg tw-flex tw-items-center tw-justify-center">
-                       <Package className="tw-text-gray-400" size={24} />
+                      <Package className="tw-text-gray-400" size={24} />
                     </div>
                     <div>
                       <p className="tw-font-medium">{item.product.name}</p>
@@ -137,19 +137,19 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
               </div>
             </CardContent>
           </Card>
-          
+
           <Card>
-             <CardHeader>
+            <CardHeader>
               <CardTitle>Payment</CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="tw-flex tw-items-center tw-gap-2">
-                 <CreditCard size={16} className="tw-text-gray-400" />
-                 <span className="tw-text-sm tw-capitalize">{order.paymentMethod}</span>
-               </div>
-                <Badge variant={order.paymentStatus === 'paid' ? 'default' : 'outline'} className="tw-mt-2 tw-capitalize">
-                  {order.paymentStatus}
-                </Badge>
+              <div className="tw-flex tw-items-center tw-gap-2">
+                <CreditCard size={16} className="tw-text-gray-400" />
+                <span className="tw-text-sm tw-capitalize">{order.paymentMethod}</span>
+              </div>
+              <Badge variant={order.paymentStatus === 'paid' ? 'default' : 'outline'} className="tw-mt-2 tw-capitalize">
+                {order.paymentStatus}
+              </Badge>
             </CardContent>
           </Card>
         </div>

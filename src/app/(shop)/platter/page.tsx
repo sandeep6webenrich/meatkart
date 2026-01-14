@@ -11,7 +11,7 @@ export default async function PlatterPage() {
         redirect('/auth/login?next=/platter')
     }
 
-    const platters = await getPlatters(user.id)
+    const platters = await getPlatters()
 
     return (
         <div className="tw-min-h-screen tw-bg-gray-50 tw-pt-10 tw-pb-20">

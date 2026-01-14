@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import "../globals.css";
-import { LayoutDashboard, Package, ShoppingCart, Users, Settings, FileBarChart, UserSquare2 } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Users, Settings, FileBarChart, UserSquare2, MapPin } from "lucide-react";
 import { Toaster } from "sonner";
 import { LogoutButton } from "@/components/admin/LogoutButton";
+import { CacheClearButton } from "@/components/admin/CacheClearButton";
 import { createClient } from "@/lib/supabase/server";
 import prisma from "@/lib/prisma";
+import { ROLES, hasRole } from "@/lib/roles";
+import { requireSuperAdmin } from "@/lib/auth-helpers";
 
 export const metadata: Metadata = {
   title: "MeatKart Admin",
@@ -47,8 +50,9 @@ export default async function AdminLayout({
     });
   }
 
-  // If user not found in database or not admin, show access denied
-  if (!dbUser || dbUser.role !== 'admin') {
+  // If user not found in database or not authorized, show access denied
+  const authorizedRoles = [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.MANAGER, ROLES.EDITOR];
+  if (!dbUser || !authorizedRoles.includes(dbUser.role as any)) {
     return (
       <html lang="en">
         <head>
@@ -102,6 +106,7 @@ export default async function AdminLayout({
             </div>
             <nav className="tw-flex-1 tw-p-4 tw-space-y-1">
               <p className="tw-px-4 tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-wider tw-mb-3 tw-mt-2">Menu</p>
+
               <Link
                 href="/admin"
                 className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
@@ -109,59 +114,84 @@ export default async function AdminLayout({
                 <LayoutDashboard size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
                 <span className="tw-font-medium">Dashboard</span>
               </Link>
-              <Link
-                href="/admin/categories"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <Package size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Categories</span>
-              </Link>
-              <Link
-                href="/admin/products"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <Package size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Products</span>
-              </Link>
-              <Link
-                href="/admin/orders"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <ShoppingCart size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Orders</span>
-              </Link>
-              <Link
-                href="/admin/customers"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <UserSquare2 size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Customers</span>
-              </Link>
-              <Link
-                href="/admin/reports"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <FileBarChart size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Reports</span>
-              </Link>
 
-              <p className="tw-px-4 tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-wider tw-mt-8 tw-mb-3">System</p>
-              <Link
-                href="/admin/users"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <Users size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Admin Users</span>
-              </Link>
-              <Link
-                href="/admin/settings"
-                className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
-              >
-                <Settings size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
-                <span className="tw-font-medium">Settings</span>
-              </Link>
+              {(hasRole(dbUser.role, ROLES.EDITOR) || hasRole(dbUser.role, ROLES.MANAGER)) && (
+                <>
+                  <Link
+                    href="/admin/categories"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <Package size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Categories</span>
+                  </Link>
+                  <Link
+                    href="/admin/products"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <Package size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Products</span>
+                  </Link>
+                  <Link
+                    href="/admin/locations"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <MapPin size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Locations</span>
+                  </Link>
+                </>
+              )}
+
+              {hasRole(dbUser.role, ROLES.MANAGER) && (
+                <>
+                  <Link
+                    href="/admin/orders"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <ShoppingCart size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Orders</span>
+                  </Link>
+                  <Link
+                    href="/admin/customers"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <UserSquare2 size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Customers</span>
+                  </Link>
+                </>
+              )}
+
+              {hasRole(dbUser.role, ROLES.ADMIN) && (
+                <Link
+                  href="/admin/reports"
+                  className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                >
+                  <FileBarChart size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                  <span className="tw-font-medium">Reports</span>
+                </Link>
+              )}
+
+              {hasRole(dbUser.role, ROLES.SUPER_ADMIN) && (
+                <>
+                  <p className="tw-px-4 tw-text-xs tw-font-bold tw-text-gray-400 tw-uppercase tw-tracking-wider tw-mt-8 tw-mb-3">System</p>
+                  <Link
+                    href="/admin/users"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <Users size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Admin Users</span>
+                  </Link>
+                  <Link
+                    href="/admin/settings"
+                    className="tw-flex tw-items-center tw-space-x-3 tw-px-4 tw-py-3 tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-primary tw-rounded-lg tw-transition-all tw-group"
+                  >
+                    <Settings size={20} className="tw-text-gray-400 group-hover:tw-text-primary" />
+                    <span className="tw-font-medium">Settings</span>
+                  </Link>
+                </>
+              )}
             </nav>
-            <div className="tw-p-4 tw-border-t tw-border-gray-100">
+            <div className="tw-p-4 tw-border-t tw-border-gray-100 tw-space-y-1">
+              <CacheClearButton />
               <LogoutButton />
             </div>
           </aside>

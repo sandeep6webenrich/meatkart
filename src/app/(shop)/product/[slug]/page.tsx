@@ -60,7 +60,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       id: pw.id,
       weight: pw.weight,
       price: Number(pw.price)
-    }))
+    })),
+    slug: product.slug
   }
 
   return <ProductClient product={productData} />

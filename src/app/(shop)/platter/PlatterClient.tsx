@@ -40,11 +40,11 @@ export default function PlatterClient({ initialPlatters, userId }: { initialPlat
 
         platter.items.forEach(item => {
             addItemToCart({
-                id: item.productId,
+                productId: item.productId,
                 name: item.product.name,
                 price: Number(item.productWeight.price),
                 quantity: item.quantity,
-                image: item.product.productImages[0]?.imageUrl || '',
+                imageUrl: item.product.productImages[0]?.imageUrl || '',
                 weight: item.productWeight.weight,
                 weightId: item.weightId
             })
@@ -87,7 +87,7 @@ export default function PlatterClient({ initialPlatters, userId }: { initialPlat
                 <h2 className="tw-text-2xl tw-font-semibold tw-text-gray-800 tw-mb-2">Your platter is empty</h2>
                 <p className="tw-text-gray-500 tw-mb-8">Build your weekly meat template for faster checkouts!</p>
                 <Link
-                    href="/"
+                    href="/search"
                     className="tw-inline-block tw-bg-teal tw-text-white tw-px-8 tw-py-3 tw-rounded-lg tw-font-bold tw-uppercase hover:tw-bg-teal-hover tw-transition-colors"
                 >
                     Browse Products
@@ -171,7 +171,7 @@ export default function PlatterClient({ initialPlatters, userId }: { initialPlat
 
             <div className="tw-flex tw-justify-center tw-pt-4">
                 <Link
-                    href="/"
+                    href="/search"
                     className="tw-text-teal tw-font-semibold hover:tw-underline tw-flex tw-items-center tw-gap-2"
                 >
                     <Plus size={18} /> Add more items to your platter from store

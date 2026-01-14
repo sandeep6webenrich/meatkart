@@ -2,11 +2,20 @@ import prisma from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import { CreateUserDialog, UserActions } from "@/components/admin/UserDialogs";
 
+import { requireSuperAdmin } from "@/lib/auth-helpers";
+import { ROLES } from "@/lib/roles";
+
 export const dynamic = 'force-dynamic';
 
 export default async function UsersPage() {
+  await requireSuperAdmin();
+
   const users = await prisma.user.findMany({
-    where: { role: 'admin' },
+    where: {
+      role: {
+        in: [ROLES.ADMIN, ROLES.MANAGER, ROLES.EDITOR, ROLES.SUPER_ADMIN]
+      }
+    },
     orderBy: { createdAt: 'desc' },
   });
 

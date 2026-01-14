@@ -56,27 +56,43 @@ export async function requireAuth(): Promise<AuthUser> {
     return user
 }
 
+import { ROLES, type UserRole, hasRole } from '@/lib/roles'
+
 /**
- * Require admin role - throws if user is not an admin
+ * Require specific role access
  */
-export async function requireAdmin(): Promise<AuthUser> {
+export async function requireRole(role: UserRole): Promise<AuthUser> {
     const user = await requireAuth()
 
-    if (user.role !== 'admin') {
-        throw new Error('Forbidden: Admin access required')
+    if (!hasRole(user.role, role)) {
+        throw new Error(`Forbidden: ${role} access required`)
     }
 
     return user
 }
 
 /**
- * Check if current user is an admin
+ * Require admin role - throws if user is not an admin or higher
+ */
+export async function requireAdmin(): Promise<AuthUser> {
+    return requireRole(ROLES.ADMIN)
+}
+
+/**
+ * Check if current user is an admin (or higher)
  */
 export async function isAdmin(): Promise<boolean> {
     try {
         const user = await getCurrentUser()
-        return user?.role === 'admin'
+        return user ? hasRole(user.role, ROLES.ADMIN) : false
     } catch {
         return false
     }
+}
+
+/**
+ * Require super admin role
+ */
+export async function requireSuperAdmin(): Promise<AuthUser> {
+    return requireRole(ROLES.SUPER_ADMIN)
 }

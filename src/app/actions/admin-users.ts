@@ -3,21 +3,21 @@
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
-import { requireAdmin } from '@/lib/auth-helpers'
+import { requireSuperAdmin } from '@/lib/auth-helpers'
 
 const userSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.string().email("Invalid email address").optional().or(z.literal('')),
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
-    role: z.enum(["customer", "admin"]),
+    role: z.enum(["customer", "admin", "manager", "editor", "super_admin"]),
 })
 
 export async function createUser(prevState: any, formData: FormData) {
-    // SECURITY FIX P0-2: Verify admin authorization before proceeding
+    // SECURITY FIX P0-2: Verify super admin authorization before proceeding
     try {
-        await requireAdmin()
+        await requireSuperAdmin()
     } catch {
-        return { message: 'Unauthorized: Admin access required', success: false }
+        return { message: 'Unauthorized: Super Admin access required', success: false }
     }
 
     try {
@@ -62,19 +62,18 @@ export async function createUser(prevState: any, formData: FormData) {
         return { message: 'User created successfully', success: true }
     } catch (e: any) {
         if (e instanceof z.ZodError) {
-            const zodError = e as z.ZodError;
-            return { message: zodError.errors[0]?.message || 'Validation error', success: false }
+            return { message: (e as any).errors[0]?.message || 'Validation error', success: false }
         }
         return { message: 'Failed to create user: ' + e.message, success: false }
     }
 }
 
 export async function updateUserRole(userId: string, newRole: string) {
-    // SECURITY FIX P0-2: Verify admin authorization before proceeding
+    // SECURITY FIX P0-2: Verify super admin authorization before proceeding
     try {
-        await requireAdmin()
+        await requireSuperAdmin()
     } catch {
-        return { message: 'Unauthorized: Admin access required', success: false }
+        return { message: 'Unauthorized: Super Admin access required', success: false }
     }
 
     try {
@@ -90,11 +89,11 @@ export async function updateUserRole(userId: string, newRole: string) {
 }
 
 export async function deleteUser(userId: string) {
-    // SECURITY FIX P0-2: Verify admin authorization before proceeding
+    // SECURITY FIX P0-2: Verify super admin authorization before proceeding
     try {
-        await requireAdmin()
+        await requireSuperAdmin()
     } catch {
-        return { message: 'Unauthorized: Admin access required', success: false }
+        return { message: 'Unauthorized: Super Admin access required', success: false }
     }
 
     try {

@@ -40,23 +40,26 @@ type ProductFormProps = {
     isActive: boolean
     productImages: ProductImage[]
     productWeights: ProductWeight[]
+    locations?: { id: string }[]
   }
+  locations: { id: string; name: string }[]
 }
 
-export function ProductForm({ categories, product }: ProductFormProps) {
+export function ProductForm({ categories, product, locations }: ProductFormProps) {
   const router = useRouter()
   const [images, setImages] = useState<ProductImage[]>(product?.productImages || [])
   const [weights, setWeights] = useState<ProductWeight[]>(product?.productWeights || [])
-  
+  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>(product?.locations?.map(l => l.id) || [])
+
   // Local state for new entries
   const [newImageUrl, setNewImageUrl] = useState('')
   const [newWeight, setNewWeight] = useState({ weight: '', price: '', discountPrice: '' })
 
   const initialState: ProductFormState = { message: '', errors: {} }
-  
+
   // Wrap updateProduct to bind the ID
-  const updateProductWithId = product 
-    ? updateProduct.bind(null, product.id) 
+  const updateProductWithId = product
+    ? updateProduct.bind(null, product.id)
     : createProduct
 
   const [state, formAction, isPending] = useActionState(updateProductWithId, initialState)
@@ -95,7 +98,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         <div className="tw-space-y-6">
           <div className="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-sm tw-border tw-border-gray-100">
             <h3 className="tw-text-lg tw-font-semibold tw-mb-4">Basic Information</h3>
-            
+
             <div className="tw-space-y-4">
               <div className="tw-space-y-2">
                 <Label htmlFor="name">Product Name</Label>
@@ -183,7 +186,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                   required
                 />
               </div>
-              
+
               <div className="tw-flex tw-items-center tw-space-x-2">
                 <input
                   type="checkbox"
@@ -202,9 +205,9 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         <div className="tw-space-y-6">
           <div className="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-sm tw-border tw-border-gray-100">
             <h3 className="tw-text-lg tw-font-semibold tw-mb-4">Product Images</h3>
-            
+
             <input type="hidden" name="images" value={JSON.stringify(images)} />
-            
+
             <div className="tw-space-y-4">
               <div className="tw-flex tw-gap-2">
                 <Input
@@ -245,25 +248,25 @@ export function ProductForm({ categories, product }: ProductFormProps) {
 
           <div className="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-sm tw-border tw-border-gray-100">
             <h3 className="tw-text-lg tw-font-semibold tw-mb-4">Weights & Pricing</h3>
-            
+
             <input type="hidden" name="weights" value={JSON.stringify(weights)} />
-            
+
             <div className="tw-space-y-4">
               <div className="tw-grid tw-grid-cols-3 tw-gap-2">
                 <Input
                   value={newWeight.weight}
-                  onChange={(e) => setNewWeight({...newWeight, weight: e.target.value})}
+                  onChange={(e) => setNewWeight({ ...newWeight, weight: e.target.value })}
                   placeholder="Weight (e.g. 500g)"
                 />
                 <Input
                   value={newWeight.price}
-                  onChange={(e) => setNewWeight({...newWeight, price: e.target.value})}
+                  onChange={(e) => setNewWeight({ ...newWeight, price: e.target.value })}
                   placeholder="Price"
                   type="number"
                 />
                 <Input
                   value={newWeight.discountPrice}
-                  onChange={(e) => setNewWeight({...newWeight, discountPrice: e.target.value})}
+                  onChange={(e) => setNewWeight({ ...newWeight, discountPrice: e.target.value })}
                   placeholder="Sale Price (opt)"
                   type="number"
                 />
