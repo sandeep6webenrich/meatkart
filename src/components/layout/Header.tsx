@@ -22,7 +22,7 @@ export function Header() {
 
   useEffect(() => {
     setMounted(true)
-    
+
     // Check auth state
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -68,16 +68,16 @@ export function Header() {
               <div className="col-md-12  no-gutter">
                 <p className="pull-left">Location:</p>
                 <div className={`dropdown drop-down-content ${locationOpen ? 'open' : ''}`}>
-                  <button 
-                    className="btn btn-default dropdown-toggle drop-down-button" 
-                    type="button" 
-                    id="dropdownMenu1" 
+                  <button
+                    className="btn btn-default dropdown-toggle drop-down-button"
+                    type="button"
+                    id="dropdownMenu1"
                     onClick={() => setLocationOpen(!locationOpen)}
-                    aria-haspopup="true" 
+                    aria-haspopup="true"
                     aria-expanded={locationOpen}
                   >
-                  {mounted ? city : 'Location'}
-                  <span className="caret click"></span>
+                    {mounted ? city : 'Location'}
+                    <span className="caret click"></span>
                   </button>
                   <ul className="dropdown-menu locations" aria-labelledby="dropdownMenu1">
                     <li><a href="#" onClick={(e) => { e.preventDefault(); handleCitySelect('Hyderabad'); }}>Hyderabad</a></li>
@@ -90,7 +90,7 @@ export function Header() {
               <p>Order by Phone: 040 64629595</p>
             </div>
             <div className="col-md-2 no-gutter top-header-content text-center platter">
-              <p><a href="">My Platter</a></p>
+              <p><Link href="/platter">My Platter</Link></p>
             </div>
             <div className="col-md-2 no-gutter top-header-content text-center sign-up login">
               {mounted && user ? (
@@ -113,25 +113,25 @@ export function Header() {
                 <li><Link href="/category/chicken">chicken</Link></li>
                 <li><Link href="/category/seafood">sea food</Link></li>
                 <li><Link href="/category/ready-to-cook">Ready to Cook</Link></li>
-                
-                <li 
-                  className={`dropdown ${moreOpen ? 'open' : ''}`} 
+
+                <li
+                  className={`dropdown ${moreOpen ? 'open' : ''}`}
                   style={{ listStyle: 'none', position: 'relative' }}
                   onMouseEnter={() => setMoreOpen(true)}
                   onMouseLeave={() => setMoreOpen(false)}
                 >
-                  <a 
-                    href="#" 
-                    className="dropdown-toggle" 
+                  <a
+                    href="#"
+                    className="dropdown-toggle"
                     onClick={(e) => e.preventDefault()}
-                    aria-haspopup="true" 
+                    aria-haspopup="true"
                     aria-expanded={moreOpen}
                   >
                     More <span className="caret"></span>
                   </a>
-                  <ul 
-                    className="dropdown-menu" 
-                    style={{ 
+                  <ul
+                    className="dropdown-menu"
+                    style={{
                       display: moreOpen ? 'block' : 'none',
                       marginTop: '0',
                       borderRadius: '0',
@@ -151,10 +151,10 @@ export function Header() {
             <div className=" col-md-8 no-gutter">
               <form onSubmit={handleSearch} className="input-group search-bar">
                 <a href="#" onClick={(e) => { e.preventDefault(); handleSearch(e); }}><img src="/images/search-icon.png" alt="search-img" className=" search-img" /></a>
-                <input 
-                  type="text" 
-                  className="form-control search-bar-control" 
-                  placeholder=" Search by keyword" 
+                <input
+                  type="text"
+                  className="form-control search-bar-control"
+                  placeholder=" Search by keyword"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />

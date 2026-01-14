@@ -72,7 +72,7 @@ export function LoginForm() {
       }
       const formattedPhone = data.phone.startsWith('+') ? data.phone : `+91${data.phone}`
       setPhoneNumber(formattedPhone)
-      
+
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
       })
@@ -124,10 +124,10 @@ export function LoginForm() {
         .single()
 
       if (userError && userError.code !== 'PGRST116') { // PGRST116 is "The result contains 0 rows"
-         console.error('Error fetching user:', userError)
-         // Proceed to register if error is just "not found", otherwise handle? 
-         // For safety, if error is distinct from "not found", we might want to alert.
-         // But usually RLS or just missing row returns null or error. 
+        console.error('Error fetching user:', userError)
+        // Proceed to register if error is just "not found", otherwise handle? 
+        // For safety, if error is distinct from "not found", we might want to alert.
+        // But usually RLS or just missing row returns null or error. 
       }
 
       if (!userData) {
@@ -200,7 +200,7 @@ export function LoginForm() {
         return
       }
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (!user) {
         toast.error('Authentication error: No session found')
         return
@@ -342,9 +342,9 @@ export function LoginForm() {
               </div>
 
               <div className="tw-grid tw-grid-cols-2 tw-gap-4">
-                <button 
+                <button
                   type="button"
-                  onClick={() => handleSocialLogin('google')} 
+                  onClick={() => handleSocialLogin('google')}
                   disabled={loading}
                   className="tw-flex tw-items-center tw-justify-center tw-h-11 tw-px-4 tw-border tw-border-gray-200 tw-rounded-lg tw-bg-white tw-text-gray-600 tw-font-medium tw-text-sm hover:tw-bg-gray-50 tw-transition-colors disabled:tw-opacity-50 disabled:tw-cursor-not-allowed"
                 >
@@ -356,14 +356,14 @@ export function LoginForm() {
                   </svg>
                   Google
                 </button>
-                <button 
+                <button
                   type="button"
-                  onClick={() => handleSocialLogin('facebook')} 
+                  onClick={() => handleSocialLogin('facebook')}
                   disabled={loading}
                   className="tw-flex tw-items-center tw-justify-center tw-h-11 tw-px-4 tw-border tw-border-gray-200 tw-rounded-lg tw-bg-white tw-text-gray-600 tw-font-medium tw-text-sm hover:tw-bg-gray-50 tw-transition-colors disabled:tw-opacity-50 disabled:tw-cursor-not-allowed"
                 >
                   <svg className="tw-mr-2 tw-h-5 tw-w-5" fill="#1877F2" viewBox="0 0 24 24">
-                    <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036c-2.148 0-2.971.747-2.971 2.54e.g.v1.422h3.326l-.342 3.667h-2.984v7.98h-5.843z" />
+                    <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036c-2.148 0-2.971.747-2.971 2.54v1.422h3.326l-.342 3.667h-2.984v7.98h-5.843z" />
                   </svg>
                   Facebook
                 </button>

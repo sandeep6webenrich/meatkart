@@ -12,7 +12,15 @@ type Product = {
   weights: { id: string; weight: string; price: number }[]
 }
 
-export default function AddToCartButton({ product, variant = 'primary' }: { product: Product, variant?: 'primary' | 'minimal' }) {
+export default function AddToCartButton({
+  product,
+  variant = 'primary',
+  externalWeightId
+}: {
+  product: Product,
+  variant?: 'primary' | 'minimal',
+  externalWeightId?: string
+}) {
   const addItem = useCartStore((s) => s.addItem)
   const items = useCartStore((s) => s.items)
   const updateQuantity = useCartStore((s) => s.updateQuantity)
@@ -23,28 +31,30 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
     setMounted(true)
   }, [])
 
-  if (!mounted) return <button className="add-cart-button" disabled>Add to cart</button>
+  if (!mounted) return <button className="tw-block tw-w-full tw-rounded-lg tw-px-5 tw-py-2.5 tw-font-bold tw-uppercase tw-text-sm tw-bg-gray-100 tw-text-gray-400" disabled>Add to cart</button>
 
-  // Check if item is already in cart (using first weight as default)
-  const firstWeight = product.weights[0]
-  const cartItem = firstWeight
-    ? items.find(i => i.productId === product.id && i.weightId === firstWeight.id)
+  // Use externalWeightId if provided, otherwise default to first weight
+  const activeWeightId = externalWeightId || product.weights[0]?.id
+  const activeWeight = product.weights.find(w => w.id === activeWeightId)
+
+  const cartItem = activeWeight
+    ? items.find(i => i.productId === product.id && i.weightId === activeWeightId)
     : null
 
   const quantity = cartItem ? cartItem.quantity : 0
 
   const handleAdd = () => {
-    if (!firstWeight) {
+    if (!activeWeight) {
       toast.error('Product currently unavailable')
       return
     }
 
     addItem({
       productId: product.id,
-      weightId: firstWeight.id,
+      weightId: activeWeight.id,
       name: product.name,
-      price: Number(firstWeight.price),
-      weight: firstWeight.weight,
+      price: Number(activeWeight.price),
+      weight: activeWeight.weight,
       quantity: 1,
       imageUrl: product.imageUrl,
     })
@@ -52,16 +62,16 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
   }
 
   const handleIncrement = () => {
-    if (cartItem && firstWeight) {
-      updateQuantity(product.id, firstWeight.id, quantity + 1)
+    if (cartItem && activeWeight) {
+      updateQuantity(product.id, activeWeight.id, quantity + 1)
     } else {
       handleAdd()
     }
   }
 
   const handleDecrement = () => {
-    if (cartItem && firstWeight) {
-      updateQuantity(product.id, firstWeight.id, Math.max(0, quantity - 1))
+    if (cartItem && activeWeight) {
+      updateQuantity(product.id, activeWeight.id, Math.max(0, quantity - 1))
     }
   }
 
@@ -88,8 +98,8 @@ export default function AddToCartButton({ product, variant = 'primary' }: { prod
   return (
     <button
       className={`tw-block tw-w-full tw-rounded-lg tw-px-5 tw-py-2.5 tw-font-bold tw-uppercase tw-text-sm tw-transition-colors ${variant === 'minimal'
-          ? 'tw-bg-white tw-text-primary tw-border tw-border-primary hover:tw-bg-red-50'
-          : 'tw-bg-primary tw-text-white tw-border-none hover:tw-bg-red-600'
+        ? 'tw-bg-white tw-text-primary tw-border tw-border-primary hover:tw-bg-red-50'
+        : 'tw-bg-primary tw-text-white tw-border-none hover:tw-bg-red-600'
         }`}
       type="button"
       onClick={handleAdd}

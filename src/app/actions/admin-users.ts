@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { requireAdmin } from '@/lib/auth-helpers'
 
 const userSchema = z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
@@ -12,6 +13,13 @@ const userSchema = z.object({
 })
 
 export async function createUser(prevState: any, formData: FormData) {
+    // SECURITY FIX P0-2: Verify admin authorization before proceeding
+    try {
+        await requireAdmin()
+    } catch {
+        return { message: 'Unauthorized: Admin access required', success: false }
+    }
+
     try {
         const rawData = {
             name: formData.get('name'),
@@ -62,6 +70,13 @@ export async function createUser(prevState: any, formData: FormData) {
 }
 
 export async function updateUserRole(userId: string, newRole: string) {
+    // SECURITY FIX P0-2: Verify admin authorization before proceeding
+    try {
+        await requireAdmin()
+    } catch {
+        return { message: 'Unauthorized: Admin access required', success: false }
+    }
+
     try {
         await prisma.user.update({
             where: { id: userId },
@@ -75,6 +90,13 @@ export async function updateUserRole(userId: string, newRole: string) {
 }
 
 export async function deleteUser(userId: string) {
+    // SECURITY FIX P0-2: Verify admin authorization before proceeding
+    try {
+        await requireAdmin()
+    } catch {
+        return { message: 'Unauthorized: Admin access required', success: false }
+    }
+
     try {
         await prisma.user.delete({
             where: { id: userId }

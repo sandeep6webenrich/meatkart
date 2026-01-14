@@ -1,19 +1,117 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
+import { Decimal } from '@prisma/client/runtime/library'
+
+type CheckoutItem = {
+  productId: string
+  weightId: string
+  quantity: number
+  cutType?: string
+}
+
+type CustomerInfo = {
+  name: string
+  email?: string
+  phone: string
+  address: string
+  city: string
+  pincode: string
+}
 
 export async function POST(req: Request) {
   try {
     const body = await req.json()
-    const { items, totalAmount, customer } = body
+    const { items, customer } = body as { items: CheckoutItem[]; customer: CustomerInfo }
 
+    // Validate required fields
     if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
     }
 
-    // 1. Create or Find User (Simple implementation: find by phone or create new "guest" user)
-    // In a real app with Auth, we would use the session user ID.
-    // For now, we'll create a user record for this guest checkout if phone doesn't exist.
-    
+    if (!customer?.phone || !customer?.name || !customer?.address) {
+      return NextResponse.json({ error: 'Missing required customer information' }, { status: 400 })
+    }
+
+    // Validate phone format (basic validation)
+    const phoneRegex = /^[+]?[\d\s-]{10,15}$/
+    if (!phoneRegex.test(customer.phone)) {
+      return NextResponse.json({ error: 'Invalid phone number format' }, { status: 400 })
+    }
+
+    // SECURITY FIX: Fetch all product weights from database to calculate prices server-side
+    const weightIds = items.map(item => item.weightId)
+    const productWeights = await prisma.productWeight.findMany({
+      where: {
+        id: { in: weightIds },
+        isActive: true,
+        product: {
+          isActive: true
+        }
+      },
+      include: {
+        product: {
+          select: {
+            id: true,
+            name: true,
+            isActive: true,
+            stockQuantity: true
+          }
+        }
+      }
+    })
+
+    // Create a map for quick lookup
+    const weightMap = new Map(productWeights.map(w => [w.id, w]))
+
+    // Validate all items exist and calculate server-side total
+    let calculatedTotal = new Decimal(0)
+    const orderItemsData: Array<{
+      productId: string
+      weightId: string
+      quantity: number
+      unitPrice: Decimal
+      totalPrice: Decimal
+      cutType?: string
+    }> = []
+
+    for (const item of items) {
+      const weightData = weightMap.get(item.weightId)
+
+      if (!weightData) {
+        return NextResponse.json({
+          error: `Product variant not found or unavailable: ${item.weightId}`
+        }, { status: 400 })
+      }
+
+      if (weightData.product.id !== item.productId) {
+        return NextResponse.json({
+          error: 'Product and weight mismatch'
+        }, { status: 400 })
+      }
+
+      if (!weightData.product.isActive) {
+        return NextResponse.json({
+          error: `Product ${weightData.product.name} is no longer available`
+        }, { status: 400 })
+      }
+
+      // Use discount price if available, otherwise regular price
+      const unitPrice = weightData.discountPrice ?? weightData.price
+      const itemTotal = unitPrice.mul(item.quantity)
+
+      calculatedTotal = calculatedTotal.add(itemTotal)
+
+      orderItemsData.push({
+        productId: item.productId,
+        weightId: item.weightId,
+        quantity: item.quantity,
+        unitPrice: unitPrice,
+        totalPrice: itemTotal,
+        cutType: item.cutType
+      })
+    }
+
+    // Create or Find User 
     let user = await prisma.user.findUnique({
       where: { phone: customer.phone }
     })
@@ -29,41 +127,43 @@ export async function POST(req: Request) {
       })
     }
 
-    // 2. Create Order
-    // Generate a simple order number (timestamp + random)
+    // Generate order number
     const orderNumber = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`
 
+    // Create Order with SERVER-CALCULATED total (not client-provided)
     const order = await prisma.order.create({
       data: {
         userId: user.id,
         orderNumber,
-        totalAmount,
+        totalAmount: calculatedTotal, // SECURITY: Using server-calculated total
         status: 'pending',
-        paymentMethod: 'COD', // Defaulting to COD for this flow
+        paymentMethod: 'COD',
         deliveryAddress: {
-            street: customer.address,
-            city: customer.city,
-            pincode: customer.pincode,
-            phone: customer.phone,
-            name: customer.name
+          street: customer.address,
+          city: customer.city,
+          pincode: customer.pincode,
+          phone: customer.phone,
+          name: customer.name
         },
         orderItems: {
-          create: items.map((item: any) => ({
-            productId: item.productId,
-            weightId: item.weightId,
-            quantity: item.quantity,
-            unitPrice: item.price,
-            totalPrice: item.price * item.quantity,
-            cutType: item.cutType
-          }))
+          create: orderItemsData
         }
       }
     })
 
-    return NextResponse.json({ success: true, orderId: order.id, orderNumber: order.orderNumber })
+    return NextResponse.json({
+      success: true,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      totalAmount: calculatedTotal.toNumber() // Return the actual calculated amount
+    })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // SECURITY FIX: Log error server-side but return generic message to client
     console.error('Checkout error:', error)
-    return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 })
+
+    return NextResponse.json({
+      error: 'Unable to process your order. Please try again later.'
+    }, { status: 500 })
   }
 }

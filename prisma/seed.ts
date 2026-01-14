@@ -65,12 +65,24 @@ async function main() {
     },
     {
       categorySlug: 'chicken',
+      name: 'Chicken Thigh (Boneless)',
+      slug: 'chicken-thigh-boneless',
+      description: 'Juicy and flavorful boneless chicken thighs. Perfect for grills.',
+      imageUrl: '/images/chicken.png',
+      weights: [
+        { weight: '450gms', price: 310, discountPrice: 279 },
+        { weight: '900gms', price: 600, discountPrice: 539 },
+      ],
+    },
+    {
+      categorySlug: 'chicken',
       name: 'Chicken Drumsticks',
       slug: 'chicken-drumsticks',
       description: 'Juicy bone-in drumsticks. Ideal for tandoori or frying.',
       imageUrl: '/images/chicken-or.png',
       weights: [
         { weight: '500gms', price: 239, discountPrice: 199 },
+        { weight: '1kg', price: 450, discountPrice: 389 },
       ],
     },
     {
@@ -80,7 +92,8 @@ async function main() {
       description: 'Frenched chicken winglets. The ultimate appetizer.',
       imageUrl: '/images/sell-1.png',
       weights: [
-        { weight: '10 Pcs', price: 219, discountPrice: null },
+        { weight: '10 Pcs', price: 219, discountPrice: 189 },
+        { weight: '20 Pcs', price: 410, discountPrice: 359 },
       ],
     },
     {
@@ -91,6 +104,7 @@ async function main() {
       imageUrl: '/images/boneless-chick.png',
       weights: [
         { weight: '450gms', price: 299, discountPrice: 269 },
+        { weight: '900gms', price: 580, discountPrice: 520 },
       ],
     },
 
@@ -114,6 +128,7 @@ async function main() {
       imageUrl: '/images/boneless-mutton.png',
       weights: [
         { weight: '500gms', price: 690, discountPrice: 649 },
+        { weight: '1kg', price: 1350, discountPrice: 1249 },
       ],
     },
     {
@@ -124,6 +139,7 @@ async function main() {
       imageUrl: '/images/mutton-list-img.png',
       weights: [
         { weight: '450gms', price: 650, discountPrice: 599 },
+        { weight: '900gms', price: 1250, discountPrice: 1150 },
       ],
     },
     {
@@ -133,7 +149,8 @@ async function main() {
       description: 'Premium chops for grilling or roasting.',
       imageUrl: '/images/mutton.png',
       weights: [
-        { weight: '500gms', price: 750, discountPrice: null },
+        { weight: '500gms', price: 750, discountPrice: 699 },
+        { weight: '1kg', price: 1450, discountPrice: 1350 },
       ],
     },
 
@@ -157,6 +174,7 @@ async function main() {
       imageUrl: '/images/seafood.png',
       weights: [
         { weight: '500gms', price: 890, discountPrice: 799 },
+        { weight: '1kg', price: 1750, discountPrice: 1550 },
       ],
     },
     {
@@ -168,18 +186,31 @@ async function main() {
       weights: [
         { weight: '250gms', price: 350, discountPrice: 299 },
         { weight: '500gms', price: 650, discountPrice: 599 },
+        { weight: '1kg', price: 1200, discountPrice: 1099 },
+      ],
+    },
+    {
+      categorySlug: 'seafood',
+      name: 'Pomfret Fish (Whole)',
+      slug: 'pomfret-whole',
+      description: 'Fresh white pomfret, cleaned and ready for frying or grilling.',
+      imageUrl: '/images/seafood.png',
+      weights: [
+        { weight: '1 Pc (300-400g)', price: 450, discountPrice: 399 },
+        { weight: '2 Pcs (600-800g)', price: 850, discountPrice: 750 },
       ],
     },
 
     // --- READY TO COOK ---
     {
       categorySlug: 'ready-to-cook',
-      name: 'Chicken Cutlets (Pack of 4)',
+      name: 'Chicken Cutlets',
       slug: 'chicken-cutlets',
       description: 'Spiced minced chicken patties. Fry and serve.',
       imageUrl: '/images/sell-1.png',
       weights: [
-        { weight: '1 Pack', price: 169, discountPrice: 149 },
+        { weight: '4 Pcs', price: 169, discountPrice: 149 },
+        { weight: '8 Pcs', price: 320, discountPrice: 279 },
       ],
     },
     {
@@ -190,6 +221,18 @@ async function main() {
       imageUrl: '/images/sell-2.png',
       weights: [
         { weight: '10 Pcs', price: 249, discountPrice: 219 },
+        { weight: '20 Pcs', price: 480, discountPrice: 420 },
+      ],
+    },
+    {
+      categorySlug: 'ready-to-cook',
+      name: 'Mutton Seekh Kebab',
+      slug: 'mutton-seekh-kebab',
+      description: 'Traditional spiced mutton mince skewers. Grill and eat.',
+      imageUrl: '/images/sell-1.png',
+      weights: [
+        { weight: '4 Pcs', price: 350, discountPrice: 299 },
+        { weight: '8 Pcs', price: 680, discountPrice: 580 },
       ],
     },
 
@@ -201,8 +244,9 @@ async function main() {
       description: 'Farm fresh white eggs. Antibiotic residue free.',
       imageUrl: '/images/offerfood.png',
       weights: [
-        { weight: 'Pack of 6', price: 55, discountPrice: 49 },
-        { weight: 'Pack of 12', price: 105, discountPrice: 95 },
+        { weight: '6 Eggs', price: 55, discountPrice: 49 },
+        { weight: '12 Eggs', price: 105, discountPrice: 95 },
+        { weight: '30 Eggs', price: 250, discountPrice: 220 },
       ],
     },
     {
@@ -212,7 +256,8 @@ async function main() {
       description: 'Nutritious brown eggs from free-range hens.',
       imageUrl: '/images/offerfood.png',
       weights: [
-        { weight: 'Pack of 6', price: 85, discountPrice: 75 },
+        { weight: '6 Eggs', price: 85, discountPrice: 75 },
+        { weight: '12 Eggs', price: 160, discountPrice: 140 },
       ],
     },
   ];

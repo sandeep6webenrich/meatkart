@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -24,6 +24,7 @@ model User {
   wishlist  Wishlist?
   wallet    Wallet?
   notificationPreference NotificationPreference?
+  platters  Platter[]
 
   @@index([phone])
   @@index([role])
@@ -66,6 +67,7 @@ model Product {
   cartItems      CartItem[]
   orderItems     OrderItem[]
   wishlistItems  WishlistItem[]
+  platterItems   PlatterItem[]
 
   @@index([categoryId])
   @@index([slug])
@@ -97,6 +99,7 @@ model ProductWeight {
   product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
   cartItems CartItem[]
   orderItems OrderItem[]
+  platterItems PlatterItem[]
 
   @@index([productId])
   @@map("product_weights")
@@ -269,6 +272,37 @@ model NotificationPreference {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+ 
   @@map("notification_preferences")
+}
+ 
+model Platter {
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String        @map("user_id") @db.Uuid
+  name      String        @db.VarChar(100)
+  createdAt DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+ 
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items PlatterItem[]
+ 
+  @@index([userId])
+  @@map("platters")
+}
+ 
+model PlatterItem {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  platterId String   @map("platter_id") @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  weightId  String   @map("weight_id") @db.Uuid
+  cutType   String?  @map("cut_type")
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+ 
+  platter       Platter       @relation(fields: [platterId], references: [id], onDelete: Cascade)
+  product       Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productWeight ProductWeight @relation(fields: [weightId], references: [id], onDelete: Cascade)
+ 
+  @@index([platterId])
+  @@map("platter_items")
 }

@@ -19,6 +19,14 @@ module.exports = {
           DEFAULT: '#f4f2e9',
           foreground: '#666666',
         },
+        teal: {
+          DEFAULT: '#1a8b9d',
+          dark: '#157a8a',
+        },
+        'orange-cta': {
+          DEFAULT: '#f5a623',
+          hover: '#e09000',
+        },
       }
     },
   },

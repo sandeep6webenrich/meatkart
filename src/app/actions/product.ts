@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import prisma from '@/lib/prisma'
 import { z } from 'zod'
+import { requireAdmin } from '@/lib/auth-helpers'
 
 const productSchema = z.object({
   name: z.string().min(2),
@@ -34,10 +35,17 @@ export type ProductFormState = {
 }
 
 export async function createProduct(prevState: ProductFormState, formData: FormData) {
+  // SECURITY FIX P0-2: Verify admin authorization before proceeding
+  try {
+    await requireAdmin()
+  } catch {
+    return { message: 'Unauthorized: Admin access required' }
+  }
+
   // Parse complex data from JSON strings in hidden fields
   const images = JSON.parse(formData.get('images') as string || '[]')
   const weights = JSON.parse(formData.get('weights') as string || '[]')
-  
+
   const validatedFields = productSchema.safeParse({
     name: formData.get('name'),
     slug: formData.get('slug'),
@@ -102,9 +110,16 @@ export async function updateProduct(
   prevState: ProductFormState,
   formData: FormData
 ) {
+  // SECURITY FIX P0-2: Verify admin authorization before proceeding
+  try {
+    await requireAdmin()
+  } catch {
+    return { message: 'Unauthorized: Admin access required' }
+  }
+
   const images = JSON.parse(formData.get('images') as string || '[]')
   const weights = JSON.parse(formData.get('weights') as string || '[]')
-  
+
   const validatedFields = productSchema.safeParse({
     name: formData.get('name'),
     slug: formData.get('slug'),
@@ -144,34 +159,30 @@ export async function updateProduct(
       })
 
       // Handle Images: Delete all and recreate (simplest approach for now)
-      // Or we could try to diff, but recreating is safer for order preservation
       await tx.productImage.deleteMany({ where: { productId: id } })
       if (data.images.length > 0) {
         await tx.productImage.createMany({
-            data: data.images.map((img, idx) => ({
-                productId: id,
-                imageUrl: img.imageUrl,
-                isPrimary: idx === 0,
-                displayOrder: idx
-            }))
+          data: data.images.map((img, idx) => ({
+            productId: id,
+            imageUrl: img.imageUrl,
+            isPrimary: idx === 0,
+            displayOrder: idx
+          }))
         })
       }
 
-      // Handle Weights
-      // For weights, we might want to preserve IDs if possible, but recreating is easier
-      // To preserve IDs we'd need to separate create/update/delete logic
-      // For this MVP, let's delete and recreate to ensure consistency with the form state
+      // Handle Weights - delete and recreate
       await tx.productWeight.deleteMany({ where: { productId: id } })
       if (data.weights.length > 0) {
-         await tx.productWeight.createMany({
-            data: data.weights.map(w => ({
-                productId: id,
-                weight: w.weight,
-                price: w.price,
-                discountPrice: w.discountPrice,
-                isActive: w.isActive
-            }))
-         })
+        await tx.productWeight.createMany({
+          data: data.weights.map(w => ({
+            productId: id,
+            weight: w.weight,
+            price: w.price,
+            discountPrice: w.discountPrice,
+            isActive: w.isActive
+          }))
+        })
       }
     })
   } catch (error) {
@@ -186,6 +197,13 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(id: string) {
+  // SECURITY FIX P0-2: Verify admin authorization before proceeding
+  try {
+    await requireAdmin()
+  } catch {
+    return { success: false, message: 'Unauthorized: Admin access required' }
+  }
+
   try {
     await prisma.product.delete({
       where: { id },

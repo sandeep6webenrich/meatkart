@@ -67,7 +67,7 @@ export default function TestFlowClient({ products }: { products: Product[] }) {
         setStatus(`Success! Order ID: ${data.orderId}`)
         clearCart()
       } else {
-        setStatus(`Error: ${data.error}`)
+        setStatus(`Error: ${data.error}. Details: ${data.details || 'None'}${data.stack ? `\n\nStack: ${data.stack}` : ''}`)
       }
     } catch (e: any) {
       setStatus(`Exception: ${e.message}`)
@@ -91,7 +91,7 @@ export default function TestFlowClient({ products }: { products: Product[] }) {
               ) : (
                 <p style={{ color: 'red' }}>Unavailable</p>
               )}
-              <button 
+              <button
                 onClick={() => handleAddToCart(p)}
                 style={{ background: 'blue', color: 'white', padding: '8px 16px', cursor: 'pointer' }}
               >
@@ -108,17 +108,17 @@ export default function TestFlowClient({ products }: { products: Product[] }) {
         <pre style={{ background: '#f5f5f5', padding: 10, fontSize: 12 }}>
           {JSON.stringify(cartItems, null, 2)}
         </pre>
-        
+
         {cartItems.length > 0 && (
           <div style={{ marginTop: 20 }}>
-             <h3>Total: {getTotal()}</h3>
-             <button 
-               onClick={() => removeItem(cartItems[0].productId, cartItems[0].weightId)}
-               style={{ marginRight: 10 }}
-             >
-               Remove First Item
-             </button>
-             <button onClick={clearCart}>Clear Cart</button>
+            <h3>Total: {getTotal()}</h3>
+            <button
+              onClick={() => removeItem(cartItems[0].productId, cartItems[0].weightId)}
+              style={{ marginRight: 10 }}
+            >
+              Remove First Item
+            </button>
+            <button onClick={clearCart}>Clear Cart</button>
           </div>
         )}
 
@@ -126,13 +126,13 @@ export default function TestFlowClient({ products }: { products: Product[] }) {
 
         <h2>3. Checkout Test</h2>
         <p>Will create an order for "Test User" (Phone: 9999999999)</p>
-        <button 
+        <button
           onClick={handleCheckout}
           disabled={cartItems.length === 0}
-          style={{ 
-            background: 'green', 
-            color: 'white', 
-            padding: '10px 20px', 
+          style={{
+            background: 'green',
+            color: 'white',
+            padding: '10px 20px',
             fontSize: 16,
             cursor: cartItems.length === 0 ? 'not-allowed' : 'pointer',
             opacity: cartItems.length === 0 ? 0.5 : 1

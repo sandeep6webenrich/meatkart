@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import prisma from '@/lib/prisma'
 import { z } from 'zod'
+import { requireAdmin } from '@/lib/auth-helpers'
 
 const categorySchema = z.object({
   name: z.string().min(2),
@@ -21,6 +22,13 @@ export type CategoryFormState = {
 }
 
 export async function createCategory(prevState: CategoryFormState, formData: FormData) {
+  // SECURITY FIX P0-2: Verify admin authorization before proceeding
+  try {
+    await requireAdmin()
+  } catch {
+    return { message: 'Unauthorized: Admin access required' }
+  }
+
   const validatedFields = categorySchema.safeParse({
     name: formData.get('name'),
     slug: formData.get('slug'),
@@ -64,6 +72,13 @@ export async function updateCategory(
   prevState: CategoryFormState,
   formData: FormData
 ) {
+  // SECURITY FIX P0-2: Verify admin authorization before proceeding
+  try {
+    await requireAdmin()
+  } catch {
+    return { message: 'Unauthorized: Admin access required' }
+  }
+
   const validatedFields = categorySchema.safeParse({
     name: formData.get('name'),
     slug: formData.get('slug'),
@@ -104,6 +119,13 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(id: string) {
+  // SECURITY FIX P0-2: Verify admin authorization before proceeding
+  try {
+    await requireAdmin()
+  } catch {
+    return { success: false, message: 'Unauthorized: Admin access required' }
+  }
+
   try {
     // Check if category has products
     const productsCount = await prisma.product.count({
