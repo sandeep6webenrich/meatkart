@@ -13,6 +13,7 @@ type ProductWeight = {
   id: string;
   weight: string;
   price: number;
+  discountPrice?: number | null;
 }
 
 type Product = {
@@ -22,6 +23,8 @@ type Product = {
   category: { name: string; slug: string };
   description: string | null;
   freshnessNotes: string | null;
+  freshnessDate: Date | string | null;
+  cutTypes: string | null;
   imageUrl: string;
   weights: ProductWeight[];
 }
@@ -31,8 +34,12 @@ export default function ProductClient({ product }: { product: Product }) {
   const [checkPincode, setCheckPincode] = useState('');
   const [quantity, setQuantity] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCutDropdownOpen, setIsCutDropdownOpen] = useState(false);
   const [isSlotDropdownOpen, setIsSlotDropdownOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState(deliverySlots[0]);
+
+  const cutOptions = product.cutTypes ? product.cutTypes.split(',').map(s => s.trim()) : [];
+  const [selectedCut, setSelectedCut] = useState(cutOptions.length > 0 ? cutOptions[0] : '');
 
   // Ensure selectedWeight has a valid structure even if weights are empty
   const [selectedWeight, setSelectedWeight] = useState<ProductWeight>(
@@ -184,12 +191,65 @@ export default function ProductClient({ product }: { product: Product }) {
                   </div>
                 </div>
 
+                {/* Cut Type Selection */}
+                {cutOptions.length > 0 && (
+                  <div className="col-md-10 mutton-curry-content">
+                    <p>Cut Type</p>
+                    <img src="/images/arrow-invoice.png" alt="arrow" />
+                    <div className={`dropdown mutton-curry-content-drop-down ${isCutDropdownOpen ? 'open' : ''}`}>
+                      <button
+                        type="button"
+                        className="dropdown-toggle"
+                        onClick={() => setIsCutDropdownOpen(!isCutDropdownOpen)}
+                        style={{ background: 'none', border: 'none', fontWeight: 'bold' }}
+                      >
+                        {selectedCut} <span className="caret"></span>
+                      </button>
+                      <ul className="dropdown-menu">
+                        {cutOptions.map((opt, idx) => (
+                          <li key={idx}>
+                            <a href="#" onClick={(e) => { e.preventDefault(); setSelectedCut(opt); setIsCutDropdownOpen(false); }}>
+                              {opt}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
                 {/* Price */}
                 <div className="col-md-10 mutton-curry-content">
                   <p>Price</p>
                   <img src="/images/arrow-invoice.png" alt="arrow" />
-                  <em> &#8377; {selectedWeight.price}</em>
+                  {selectedWeight.discountPrice ? (
+                    <div style={{ display: 'inline-block' }}>
+                      <em style={{ textDecoration: 'line-through', color: '#999', fontSize: '14px', marginRight: '5px' }}>
+                        &#8377; {selectedWeight.price}
+                      </em>
+                      <em style={{ color: '#e74c3c' }}>
+                        &#8377; {selectedWeight.discountPrice}
+                      </em>
+                    </div>
+                  ) : (
+                    <em> &#8377; {selectedWeight.price}</em>
+                  )}
                 </div>
+
+                {/* Freshness Information */}
+                {(product.freshnessNotes || product.freshnessDate) && (
+                  <div className="col-md-10 mutton-curry-content">
+                    <p style={{ color: '#2ecc71', fontWeight: 'bold' }}>Freshness:</p>
+                    <div style={{ marginLeft: '10px' }}>
+                      {product.freshnessNotes && <span style={{ fontSize: '13px', color: '#666', display: 'block' }}>{product.freshnessNotes}</span>}
+                      {product.freshnessDate && (
+                        <span style={{ fontSize: '11px', color: '#999' }}>
+                          Last Stocked: {new Date(product.freshnessDate).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 {/* Qty */}
                 <div className="col-md-10 mutton-curry-content qty">
@@ -225,7 +285,7 @@ export default function ProductClient({ product }: { product: Product }) {
 
                 {/* Add To Cart Button Container */}
                 <div className="col-md-10 no-gutter" style={{ marginTop: '20px' }}>
-                  <AddToCartButton product={product} externalWeightId={selectedWeight.id} />
+                  <AddToCartButton product={product} externalWeightId={selectedWeight.id} cutType={selectedCut} />
                 </div>
 
               </div>

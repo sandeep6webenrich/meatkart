@@ -21,7 +21,7 @@ import {
     SelectValue,
 } from '@/components/ui/select'
 import { Plus, Pencil, Trash2, Loader2, MoreHorizontal } from 'lucide-react'
-import { createUser, updateUserRole, deleteUser } from '@/app/actions/admin-users'
+import { createUser, updateUserRole, deleteUser, updateUserDetails } from '@/app/actions/admin-users'
 import { toast } from 'sonner'
 import {
     DropdownMenu,
@@ -88,6 +88,12 @@ export function CreateUserDialog() {
                         <Input id="email" name="email" type="email" className="tw-col-span-3" />
                     </div>
                     <div className="tw-grid tw-grid-cols-4 tw-items-center tw-gap-4">
+                        <Label htmlFor="password" className="tw-text-right">
+                            Password
+                        </Label>
+                        <Input id="password" name="password" type="password" className="tw-col-span-3" placeholder="Optional for existing users" />
+                    </div>
+                    <div className="tw-grid tw-grid-cols-4 tw-items-center tw-gap-4">
                         <Label htmlFor="role" className="tw-text-right">
                             Role
                         </Label>
@@ -100,6 +106,7 @@ export function CreateUserDialog() {
                                 <SelectItem value="editor">Editor</SelectItem>
                                 <SelectItem value="manager">Manager</SelectItem>
                                 <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="super_admin">Super Admin</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -114,8 +121,85 @@ export function CreateUserDialog() {
     )
 }
 
+export function EditUserDialog({ user, open, setOpen }: { user: any, open: boolean, setOpen: (open: boolean) => void }) {
+    const [loading, setLoading] = useState(false)
+
+    async function handleSubmit(formData: FormData) {
+        setLoading(true)
+        try {
+            const result = await updateUserDetails(user.id, formData)
+            if (result.success) {
+                toast.success(result.message)
+                setOpen(false)
+            } else {
+                toast.error(result.message)
+            }
+        } catch (e: any) {
+            toast.error('Something went wrong')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogContent className="sm:tw-max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Edit User</DialogTitle>
+                    <DialogDescription>
+                        Update user details.
+                    </DialogDescription>
+                </DialogHeader>
+                <form action={handleSubmit} className="tw-grid tw-gap-4 tw-py-4">
+                    <div className="tw-grid tw-grid-cols-4 tw-items-center tw-gap-4">
+                        <Label htmlFor="edit-name" className="tw-text-right">
+                            Name
+                        </Label>
+                        <Input id="edit-name" name="name" defaultValue={user.name} className="tw-col-span-3" required />
+                    </div>
+                    <div className="tw-grid tw-grid-cols-4 tw-items-center tw-gap-4">
+                        <Label htmlFor="edit-phone" className="tw-text-right">
+                            Phone
+                        </Label>
+                        <Input id="edit-phone" name="phone" defaultValue={user.phone} className="tw-col-span-3" required />
+                    </div>
+                    <div className="tw-grid tw-grid-cols-4 tw-items-center tw-gap-4">
+                        <Label htmlFor="edit-email" className="tw-text-right">
+                            Email
+                        </Label>
+                        <Input id="edit-email" name="email" type="email" defaultValue={user.email || ''} className="tw-col-span-3" />
+                    </div>
+                    <div className="tw-grid tw-grid-cols-4 tw-items-center tw-gap-4">
+                        <Label htmlFor="edit-role" className="tw-text-right">
+                            Role
+                        </Label>
+                        <Select name="role" defaultValue={user.role}>
+                            <SelectTrigger className="tw-col-span-3">
+                                <SelectValue placeholder="Select a role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="customer">Customer</SelectItem>
+                                <SelectItem value="editor">Editor</SelectItem>
+                                <SelectItem value="manager">Manager</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="super_admin">Super Admin</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? <Loader2 className="tw-mr-2 tw-h-4 tw-w-4 tw-animate-spin" /> : 'Save Changes'}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
 export function UserActions({ user }: { user: any }) {
     const [loading, setLoading] = useState(false)
+    const [editOpen, setEditOpen] = useState(false)
 
     async function handleRoleUpdate(newRole: string) {
         if (loading) return
@@ -167,6 +251,11 @@ export function UserActions({ user }: { user: any }) {
                     Copy User ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setEditOpen(true)}>
+                    <Pencil className="tw-mr-2 tw-h-4 tw-w-4" />
+                    Edit Details
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
 
                 <DropdownMenuLabel className="tw-text-xs tw-text-gray-500">Change Role</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => handleRoleUpdate('customer')} disabled={user.role === 'customer'}>
@@ -181,6 +270,9 @@ export function UserActions({ user }: { user: any }) {
                 <DropdownMenuItem onClick={() => handleRoleUpdate('admin')} disabled={user.role === 'admin'}>
                     Admin
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleRoleUpdate('super_admin')} disabled={user.role === 'super_admin'}>
+                    Super Admin
+                </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleDelete} className="tw-text-red-600">
@@ -188,6 +280,7 @@ export function UserActions({ user }: { user: any }) {
                     Delete User
                 </DropdownMenuItem>
             </DropdownMenuContent>
+            <EditUserDialog user={user} open={editOpen} setOpen={setEditOpen} />
         </DropdownMenu>
     )
 }

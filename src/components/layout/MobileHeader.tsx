@@ -4,14 +4,23 @@ import Link from 'next/link'
 import { MapPin } from 'lucide-react'
 import { useLocationStore } from '@/store/location-store'
 import { useState, useEffect } from 'react'
+import { getLocations } from '@/app/actions/locations'
 
 export function MobileHeader() {
   const { city, setCity } = useLocationStore()
   const [mounted, setMounted] = useState(false)
   const [locationOpen, setLocationOpen] = useState(false)
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {
     setMounted(true)
+    const fetchLocations = async () => {
+      const res = await getLocations()
+      if (res.success && res.locations) {
+        setLocations(res.locations)
+      }
+    }
+    fetchLocations()
   }, [])
 
   const handleCitySelect = (selectedCity: string) => {
@@ -40,8 +49,13 @@ export function MobileHeader() {
 
           {locationOpen && (
             <div className="mobile-location-dropdown">
-              <button onClick={() => handleCitySelect('Hyderabad')}>Hyderabad</button>
-              <button onClick={() => handleCitySelect('Ranigung')}>Ranigung</button>
+              {locations.length > 0 ? (
+                locations.map(loc => (
+                  <button key={loc.id} onClick={() => handleCitySelect(loc.name)}>{loc.name}</button>
+                ))
+              ) : (
+                <button disabled>Loading...</button>
+              )}
             </div>
           )}
         </div>

@@ -92,9 +92,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </div>
           </div>
 
-          <div className="col-md-9">
+          <div className="col-md-9" style={{ display: 'flex', flexWrap: 'wrap' }}>
             {category.products.map((product: any) => (
-              <div className="col-md-4 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30 }}>
+              <div className="col-md-4 col-sm-6 col-xs-12" key={product.id} style={{ marginBottom: 30, display: 'flex' }}>
                 <ProductCard product={{
                   id: product.id,
                   name: product.name,

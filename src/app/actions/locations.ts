@@ -68,3 +68,21 @@ export async function deleteLocation(id: string) {
         return { success: false, error: 'Failed to delete location' }
     }
 }
+
+export async function getLocations() {
+    try {
+        const locations = await prisma.location.findMany({
+            where: { isActive: true },
+            select: {
+                id: true,
+                name: true,
+                city: true
+            },
+            orderBy: { name: 'asc' }
+        })
+        return { success: true, locations }
+    } catch (error) {
+        console.error('Get locations error:', error)
+        return { success: false, error: 'Failed to fetch locations', locations: [] }
+    }
+}

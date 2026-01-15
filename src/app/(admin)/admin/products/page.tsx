@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import { DeleteProductButton } from "@/components/admin/products/DeleteProductButton";
 
+import { ProductToastHandler } from "@/components/admin/products/ProductToastHandler";
+
 export const dynamic = 'force-dynamic';
 
 export default async function ProductsPage() {
@@ -19,6 +21,7 @@ export default async function ProductsPage() {
 
   return (
     <div className="tw-space-y-6">
+      <ProductToastHandler />
       <div className="tw-flex tw-items-center tw-justify-between">
         <h1 className="tw-text-3xl tw-font-bold tw-text-gray-900">Products</h1>
         <Link href="/admin/products/new">
@@ -66,11 +69,10 @@ export default async function ProductsPage() {
                     </td>
                     <td className="tw-px-6 tw-py-4">
                       <span
-                        className={`tw-inline-flex tw-items-center tw-px-2.5 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium ${
-                          product.isActive
+                        className={`tw-inline-flex tw-items-center tw-px-2.5 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium ${product.isActive
                             ? "tw-bg-green-100 tw-text-green-800"
                             : "tw-bg-red-100 tw-text-red-800"
-                        }`}
+                          }`}
                       >
                         {product.isActive ? "Active" : "Inactive"}
                       </span>

@@ -2,19 +2,68 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Helper to get random item from array
+function getRandom<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Helper to get random int
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Helper to get random date in past X months
+function getRandomDate(monthsBack: number): Date {
+  const date = new Date();
+  const past = new Date();
+  past.setMonth(date.getMonth() - monthsBack);
+  return new Date(past.getTime() + Math.random() * (date.getTime() - past.getTime()));
+}
+
 async function main() {
   console.log('Start seeding ...');
 
-  // 1. Cleanup existing data
-  await prisma.cartItem.deleteMany({});
-  await prisma.orderItem.deleteMany({});
-  await prisma.order.deleteMany({});
-  await prisma.productImage.deleteMany({});
-  await prisma.productWeight.deleteMany({});
-  await prisma.product.deleteMany({});
-  await prisma.category.deleteMany({});
+  // 1. Cleanup
+  console.log('Cleaning up existing data...');
+  const tablenames = await prisma.$queryRaw<
+    Array<{ tablename: string }>
+  >`SELECT tablename FROM pg_tables WHERE schemaname='public'`;
 
-  // 2. Define Categories
+  const tables = tablenames
+    .map(({ tablename }) => tablename)
+    .filter((name) => name !== '_prisma_migrations')
+    .map((name) => `"public"."${name}"`)
+    .join(', ');
+
+  try {
+    await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
+  } catch (error) {
+    console.log({ error });
+  }
+
+  // 2. Locations (Hyderabad)
+  console.log('Seeding Locations...');
+  const locationsData = [
+    { name: 'Banjara Hills', city: 'Hyderabad', state: 'Telangana', pincode: '500034', address: 'Road No 12' },
+    { name: 'Jubilee Hills', city: 'Hyderabad', state: 'Telangana', pincode: '500033', address: 'Road No 36' },
+    { name: 'Gachibowli', city: 'Hyderabad', state: 'Telangana', pincode: '500032', address: 'DLF Cyber City area' },
+    { name: 'Madhapur', city: 'Hyderabad', state: 'Telangana', pincode: '500081', address: 'Hitech City Main Rd' },
+    { name: 'Kondapur', city: 'Hyderabad', state: 'Telangana', pincode: '500084', address: 'Botanical Garden Rd' },
+    { name: 'Kukatpally', city: 'Hyderabad', state: 'Telangana', pincode: '500072', address: 'KPHB Colony' },
+    { name: 'Manikonda', city: 'Hyderabad', state: 'Telangana', pincode: '500089', address: 'Lanco Hills Rd' },
+    { name: 'Miyapur', city: 'Hyderabad', state: 'Telangana', pincode: '500049', address: 'Bollaram Rd' },
+    { name: 'Begumpet', city: 'Hyderabad', state: 'Telangana', pincode: '500016', address: 'SP Road' },
+    { name: 'Secunderabad', city: 'Hyderabad', state: 'Telangana', pincode: '500003', address: 'MG Road' },
+  ];
+
+  const createdLocations = [];
+  for (const loc of locationsData) {
+    const l = await prisma.location.create({ data: { ...loc, isActive: true } });
+    createdLocations.push(l);
+  }
+
+  // 3. Categories
+  console.log('Seeding Categories...');
   const categories = [
     { name: 'Chicken', slug: 'chicken', image: '/images/chicken.png' },
     { name: 'Mutton', slug: 'mutton', image: '/images/mutton.png' },
@@ -25,27 +74,23 @@ async function main() {
   ];
 
   const createdCategories: Record<string, string> = {};
-
   for (const cat of categories) {
-    const created = await prisma.category.create({
-      data: {
-        name: cat.name,
-        slug: cat.slug,
-        imageUrl: cat.image,
-      },
+    const c = await prisma.category.create({
+      data: { name: cat.name, slug: cat.slug, imageUrl: cat.image },
     });
-    createdCategories[cat.slug] = created.id;
-    console.log(`Created category: ${cat.name}`);
+    createdCategories[cat.slug] = c.id;
   }
 
-  // 3. Define Products
-  const products = [
+  // 4. Products
+  console.log('Seeding Products...');
+  const productData = [
     // --- CHICKEN ---
     {
       categorySlug: 'chicken',
       name: 'Chicken Curry Cut (Small Pieces)',
       slug: 'chicken-curry-cut-small',
       description: 'Bone-in | Small cuts | Skinless. Perfect for curries.',
+      freshnessNotes: 'Freshly cut today. Antibiotics free.',
       imageUrl: '/images/chicken.png',
       weights: [
         { weight: '500gms', price: 169, discountPrice: 149 },
@@ -57,6 +102,7 @@ async function main() {
       name: 'Chicken Breast (Boneless)',
       slug: 'chicken-breast-boneless',
       description: 'Tender, boneless fillets of chicken breast. High protein.',
+      freshnessNotes: 'Cleaned and vacuum packed.',
       imageUrl: '/images/boneless-chick.png',
       weights: [
         { weight: '450gms', price: 285, discountPrice: 249 },
@@ -85,35 +131,13 @@ async function main() {
         { weight: '1kg', price: 450, discountPrice: 389 },
       ],
     },
-    {
-      categorySlug: 'chicken',
-      name: 'Chicken Lollipop',
-      slug: 'chicken-lollipop',
-      description: 'Frenched chicken winglets. The ultimate appetizer.',
-      imageUrl: '/images/sell-1.png',
-      weights: [
-        { weight: '10 Pcs', price: 219, discountPrice: 189 },
-        { weight: '20 Pcs', price: 410, discountPrice: 359 },
-      ],
-    },
-    {
-      categorySlug: 'chicken',
-      name: 'Chicken Keema (Mince)',
-      slug: 'chicken-keema',
-      description: 'Finely minced chicken breast. Great for patties and keema curry.',
-      imageUrl: '/images/boneless-chick.png',
-      weights: [
-        { weight: '450gms', price: 299, discountPrice: 269 },
-        { weight: '900gms', price: 580, discountPrice: 520 },
-      ],
-    },
-
     // --- MUTTON ---
     {
       categorySlug: 'mutton',
       name: 'Mutton Curry Cut (Rich)',
       slug: 'mutton-curry-cut',
       description: 'Mix of bone-in and boneless pieces from shoulder and leg.',
+      freshnessNotes: 'Farm fresh goat meat.',
       imageUrl: '/images/mutton.png',
       weights: [
         { weight: '500gms', price: 590, discountPrice: 549 },
@@ -133,27 +157,15 @@ async function main() {
     },
     {
       categorySlug: 'mutton',
-      name: 'Mutton Keema (Minced)',
+      name: 'Mutton Keema',
       slug: 'mutton-keema',
-      description: 'Finely minced goat meat. Perfect for keema pav.',
+      description: 'Finely minced goat meat.',
       imageUrl: '/images/mutton-list-img.png',
       weights: [
-        { weight: '450gms', price: 650, discountPrice: 599 },
-        { weight: '900gms', price: 1250, discountPrice: 1150 },
+        { weight: '500gms', price: 650, discountPrice: 599 },
+        { weight: '1kg', price: 1250, discountPrice: 1199 },
       ],
     },
-    {
-      categorySlug: 'mutton',
-      name: 'Lamb Chops',
-      slug: 'lamb-chops',
-      description: 'Premium chops for grilling or roasting.',
-      imageUrl: '/images/mutton.png',
-      weights: [
-        { weight: '500gms', price: 750, discountPrice: 699 },
-        { weight: '1kg', price: 1450, discountPrice: 1350 },
-      ],
-    },
-
     // --- SEAFOOD ---
     {
       categorySlug: 'seafood',
@@ -179,95 +191,40 @@ async function main() {
     },
     {
       categorySlug: 'seafood',
-      name: 'Prawns (Medium - Cleaned)',
-      slug: 'prawns-medium',
-      description: 'De-shelled and deveined prawns. Ready to cook.',
+      name: 'Prawns (Tiger)',
+      slug: 'prawns-tiger',
+      description: 'Fresh Tiger Prawns, cleaned and deveined.',
       imageUrl: '/images/seafood.png',
       weights: [
-        { weight: '250gms', price: 350, discountPrice: 299 },
-        { weight: '500gms', price: 650, discountPrice: 599 },
-        { weight: '1kg', price: 1200, discountPrice: 1099 },
+        { weight: '250gms', price: 450, discountPrice: 399 },
+        { weight: '500gms', price: 850, discountPrice: 799 },
       ],
     },
-    {
-      categorySlug: 'seafood',
-      name: 'Pomfret Fish (Whole)',
-      slug: 'pomfret-whole',
-      description: 'Fresh white pomfret, cleaned and ready for frying or grilling.',
-      imageUrl: '/images/seafood.png',
-      weights: [
-        { weight: '1 Pc (300-400g)', price: 450, discountPrice: 399 },
-        { weight: '2 Pcs (600-800g)', price: 850, discountPrice: 750 },
-      ],
-    },
-
     // --- READY TO COOK ---
     {
       categorySlug: 'ready-to-cook',
-      name: 'Chicken Cutlets',
-      slug: 'chicken-cutlets',
-      description: 'Spiced minced chicken patties. Fry and serve.',
+      name: 'Chicken Nuggets',
+      slug: 'chicken-nuggets',
+      description: 'Classic chicken nuggets, ready to fry.',
       imageUrl: '/images/sell-1.png',
       weights: [
-        { weight: '4 Pcs', price: 169, discountPrice: 149 },
-        { weight: '8 Pcs', price: 320, discountPrice: 279 },
-      ],
-    },
-    {
-      categorySlug: 'ready-to-cook',
-      name: 'Peri Peri Chicken Wings',
-      slug: 'peri-peri-wings',
-      description: 'Spicy marinated wings. Ready to grill or fry.',
-      imageUrl: '/images/sell-2.png',
-      weights: [
-        { weight: '10 Pcs', price: 249, discountPrice: 219 },
-        { weight: '20 Pcs', price: 480, discountPrice: 420 },
-      ],
-    },
-    {
-      categorySlug: 'ready-to-cook',
-      name: 'Mutton Seekh Kebab',
-      slug: 'mutton-seekh-kebab',
-      description: 'Traditional spiced mutton mince skewers. Grill and eat.',
-      imageUrl: '/images/sell-1.png',
-      weights: [
-        { weight: '4 Pcs', price: 350, discountPrice: 299 },
-        { weight: '8 Pcs', price: 680, discountPrice: 580 },
-      ],
-    },
-
-    // --- EGGS ---
-    {
-      categorySlug: 'eggs',
-      name: 'Classic White Eggs',
-      slug: 'classic-eggs',
-      description: 'Farm fresh white eggs. Antibiotic residue free.',
-      imageUrl: '/images/offerfood.png',
-      weights: [
-        { weight: '6 Eggs', price: 55, discountPrice: 49 },
-        { weight: '12 Eggs', price: 105, discountPrice: 95 },
-        { weight: '30 Eggs', price: 250, discountPrice: 220 },
-      ],
-    },
-    {
-      categorySlug: 'eggs',
-      name: 'Brown Eggs (Free Range)',
-      slug: 'brown-eggs',
-      description: 'Nutritious brown eggs from free-range hens.',
-      imageUrl: '/images/offerfood.png',
-      weights: [
-        { weight: '6 Eggs', price: 85, discountPrice: 75 },
-        { weight: '12 Eggs', price: 160, discountPrice: 140 },
-      ],
-    },
+        { weight: '250gms', price: 199, discountPrice: 179 },
+        { weight: '500gms', price: 349, discountPrice: 299 },
+      ]
+    }
   ];
 
-  for (const prod of products) {
+  const allProductWeights: any[] = [];
+  const allProducts: any[] = [];
+
+  for (const prod of productData) {
     const categoryId = createdCategories[prod.categorySlug];
-    if (!categoryId) {
-      console.warn(`Category not found for ${prod.name}`);
-      continue;
-    }
+
+    // Assign random locations to product
+    const productLocations = createdLocations
+      .sort(() => 0.5 - Math.random())
+      .slice(0, getRandomInt(3, createdLocations.length))
+      .map(l => ({ id: l.id }));
 
     const product = await prisma.product.create({
       data: {
@@ -275,13 +232,12 @@ async function main() {
         name: prod.name,
         slug: prod.slug,
         description: prod.description,
+        freshnessNotes: prod.freshnessNotes,
         cutTypes: 'Standard',
         isActive: true,
-        stockQuantity: 50,
+        stockQuantity: getRandomInt(20, 100),
         productImages: {
-          create: [
-            { imageUrl: prod.imageUrl, isPrimary: true },
-          ],
+          create: [{ imageUrl: prod.imageUrl, isPrimary: true }],
         },
         productWeights: {
           create: prod.weights.map((w) => ({
@@ -289,13 +245,124 @@ async function main() {
             price: w.price,
             discountPrice: w.discountPrice,
             isActive: true,
-            // stock: 50, // Removed as it is not in the schema
           })),
         },
+        locations: {
+          connect: productLocations
+        }
       },
+      include: { productWeights: true },
     });
+
+    allProducts.push(product);
+    allProductWeights.push(...product.productWeights);
     console.log(`Created product: ${prod.name}`);
   }
+
+  // 5. Users
+  console.log('Seeding Users...');
+  const userNames = [
+    'Sandeep Kumar', 'Rahul Reddy', 'Priya Sharma', 'Anjali Rao', 'Vikram Singh',
+    'Karthik Raju', 'Sneha Gupta', 'Amit Patel', 'Deepa Krishnan', 'Arjun Mehta',
+    'Neha Verm', 'Varun Dhawan', 'Divya Nair', 'Rohan Das', 'Kavya Reddy'
+  ];
+
+  const users = [];
+  for (let i = 0; i < userNames.length; i++) {
+    const name = userNames[i];
+    const phone = `98${Math.floor(10000000 + Math.random() * 90000000)}`;
+    const email = `${name.toLowerCase().replace(' ', '.')}@example.com`;
+
+    try {
+      const user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          phone,
+          role: 'customer'
+        }
+      });
+
+      // Add addresses
+      const loc = getRandom(locationsData);
+      await prisma.address.create({
+        data: {
+          userId: user.id,
+          street: `${getRandomInt(1, 100)}, ${loc.address}`,
+          city: loc.city,
+          state: loc.state,
+          pincode: loc.pincode,
+          type: Math.random() > 0.5 ? 'Home' : 'Work',
+          isDefault: true
+        }
+      });
+
+      users.push(user);
+    } catch (e) {
+      console.log(`Skipping duplicate user: ${name}`);
+    }
+  }
+
+  // 6. Orders
+  console.log('Seeding Orders...');
+  const statuses = ['delivered', 'delivered', 'delivered', 'pending', 'processing', 'cancelled'];
+  const paymentMethods = ['UPI', 'COD', 'Card'];
+
+  for (let i = 0; i < 60; i++) {
+    const user = getRandom(users);
+    const status = getRandom(statuses);
+    const createdAt = getRandomDate(6); // Last 6 months
+
+    // Random items incart
+    const numItems = getRandomInt(1, 4);
+    const orderItemsData = [];
+    let totalAmount = 0;
+
+    for (let j = 0; j < numItems; j++) {
+      const weight = getRandom(allProductWeights);
+      const quantity = getRandomInt(1, 2);
+      const price = weight.discountPrice ? Number(weight.discountPrice) : Number(weight.price);
+      const lineTotal = price * quantity;
+
+      totalAmount += lineTotal;
+      orderItemsData.push({
+        productId: weight.productId,
+        weightId: weight.id,
+        quantity,
+        unitPrice: price,
+        totalPrice: lineTotal
+      });
+    }
+
+    const order = await prisma.order.create({
+      data: {
+        userId: user.id,
+        orderNumber: `ORD-${Date.now().toString().slice(-6)}-${getRandomInt(100, 999)}`,
+        totalAmount,
+        status,
+        paymentMethod: getRandom(paymentMethods),
+        paymentStatus: status === 'delivered' ? 'completed' : (status === 'cancelled' ? 'failed' : 'pending'),
+        createdAt,
+        updatedAt: createdAt,
+        orderItems: {
+          create: orderItemsData
+        }
+      }
+    });
+  }
+
+  // Create one Admin user
+  try {
+    await prisma.user.create({
+      data: {
+        name: 'Super Admin',
+        email: 'admin@meatkart.com',
+        phone: '9999999999',
+        role: 'super_admin'
+      }
+    });
+    console.log('Created Super Admin (admin@meatkart.com / 9999999999)');
+  } catch (e) { }
 
   console.log('Seeding finished.');
 }

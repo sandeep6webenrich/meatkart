@@ -36,6 +36,8 @@ type ProductFormProps = {
     categoryId: string
     description?: string | null
     freshnessNotes?: string | null
+    cutTypes?: string | null
+    freshnessDate?: string | Date | null
     stockQuantity: number
     isActive: boolean
     productImages: ProductImage[]
@@ -47,9 +49,19 @@ type ProductFormProps = {
 
 export function ProductForm({ categories, product, locations }: ProductFormProps) {
   const router = useRouter()
-  const [images, setImages] = useState<ProductImage[]>(product?.productImages || [])
-  const [weights, setWeights] = useState<ProductWeight[]>(product?.productWeights || [])
-  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>(product?.locations?.map(l => l.id) || [])
+  // Initialize state from potential error payload OR product prop
+  const [images, setImages] = useState<ProductImage[]>(() => {
+    /* @ts-ignore - inputs might exist on state */
+    return product?.productImages || []
+  })
+  const [weights, setWeights] = useState<ProductWeight[]>(() => {
+    /* @ts-ignore */
+    return product?.productWeights || []
+  })
+  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>(() => {
+    /* @ts-ignore */
+    return product?.locations?.map(l => l.id) || []
+  })
 
   // Local state for new entries
   const [newImageUrl, setNewImageUrl] = useState('')
@@ -62,7 +74,16 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
     ? updateProduct.bind(null, product.id)
     : createProduct
 
-  const [state, formAction, isPending] = useActionState(updateProductWithId, initialState)
+  const [state, formAction, isPending] = useActionState(updateProductWithId, initialState as any)
+
+  // Side effect to sync state inputs back to local state if validation failed
+  useEffect(() => {
+    if (state?.inputs) {
+      if (state.inputs.images) setImages(state.inputs.images)
+      if (state.inputs.weights) setWeights(state.inputs.weights)
+      if (state.inputs.locationIds) setSelectedLocationIds(state.inputs.locationIds)
+    }
+  }, [state])
 
   const handleAddImage = () => {
     if (newImageUrl) {
@@ -91,6 +112,14 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
     setWeights(weights.filter((_, i) => i !== index))
   }
 
+  const handleLocationToggle = (locationId: string) => {
+    if (selectedLocationIds.includes(locationId)) {
+      setSelectedLocationIds(selectedLocationIds.filter(id => id !== locationId))
+    } else {
+      setSelectedLocationIds([...selectedLocationIds, locationId])
+    }
+  }
+
   return (
     <form action={formAction} className="tw-space-y-8">
       <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-8">
@@ -105,7 +134,7 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                 <Input
                   id="name"
                   name="name"
-                  defaultValue={product?.name}
+                  defaultValue={state?.inputs?.name ?? product?.name}
                   placeholder="e.g. Curry Cut Chicken"
                   required
                 />
@@ -119,7 +148,7 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                 <Input
                   id="slug"
                   name="slug"
-                  defaultValue={product?.slug}
+                  defaultValue={state?.inputs?.slug ?? product?.slug}
                   placeholder="e.g. curry-cut-chicken"
                   required
                 />
@@ -133,7 +162,7 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                 <select
                   id="categoryId"
                   name="categoryId"
-                  defaultValue={product?.categoryId}
+                  defaultValue={state?.inputs?.categoryId ?? product?.categoryId}
                   className="tw-flex tw-h-10 tw-w-full tw-rounded-md tw-border tw-border-slate-200 tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-text-gray-900 tw-ring-offset-white file:tw-border-0 file:tw-bg-transparent file:tw-text-sm file:tw-font-medium placeholder:tw-text-slate-500 focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-slate-950 focus-visible:tw-ring-offset-2 disabled:tw-cursor-not-allowed disabled:tw-opacity-50"
                   required
                 >
@@ -154,7 +183,7 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                 <textarea
                   id="description"
                   name="description"
-                  defaultValue={product?.description || ''}
+                  defaultValue={(state?.inputs?.description ?? product?.description) || ''}
                   className="tw-flex tw-min-h-[100px] tw-w-full tw-rounded-md tw-border tw-border-slate-200 tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-text-gray-900 tw-ring-offset-white placeholder:tw-text-slate-500 focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-slate-950 focus-visible:tw-ring-offset-2 disabled:tw-cursor-not-allowed disabled:tw-opacity-50"
                   placeholder="Product description..."
                 />
@@ -165,9 +194,29 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                 <textarea
                   id="freshnessNotes"
                   name="freshnessNotes"
-                  defaultValue={product?.freshnessNotes || ''}
+                  defaultValue={(state?.inputs?.freshnessNotes ?? product?.freshnessNotes) || ''}
                   className="tw-flex tw-min-h-[80px] tw-w-full tw-rounded-md tw-border tw-border-slate-200 tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-text-gray-900 tw-ring-offset-white placeholder:tw-text-slate-500 focus-visible:tw-outline-none focus-visible:tw-ring-2 focus-visible:tw-ring-slate-950 focus-visible:tw-ring-offset-2 disabled:tw-cursor-not-allowed disabled:tw-opacity-50"
                   placeholder="e.g. Freshly cut today..."
+                />
+              </div>
+
+              <div className="tw-space-y-2">
+                <Label htmlFor="cutTypes">Cut Types (Comma separated)</Label>
+                <Input
+                  id="cutTypes"
+                  name="cutTypes"
+                  defaultValue={(state?.inputs?.cutTypes ?? product?.cutTypes) || ''}
+                  placeholder="e.g. Curry Cut, Boneless, Biryani Cut"
+                />
+              </div>
+
+              <div className="tw-space-y-2">
+                <Label htmlFor="freshnessDate">Freshness Date</Label>
+                <Input
+                  id="freshnessDate"
+                  name="freshnessDate"
+                  type="date"
+                  defaultValue={state?.inputs?.freshnessDate ?? (product?.freshnessDate ? new Date(product.freshnessDate).toISOString().split('T')[0] : '')}
                 />
               </div>
             </div>
@@ -182,7 +231,7 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                   id="stockQuantity"
                   name="stockQuantity"
                   type="number"
-                  defaultValue={product?.stockQuantity ?? 100}
+                  defaultValue={(state?.inputs?.stockQuantity ?? product?.stockQuantity) ?? 100}
                   required
                 />
               </div>
@@ -192,10 +241,45 @@ export function ProductForm({ categories, product, locations }: ProductFormProps
                   type="checkbox"
                   id="isActive"
                   name="isActive"
-                  defaultChecked={product?.isActive ?? true}
+                  defaultChecked={state?.inputs?.isActive ?? product?.isActive ?? true}
                   className="tw-h-4 tw-w-4 tw-rounded tw-border-gray-300 tw-text-primary focus:tw-ring-primary"
                 />
                 <Label htmlFor="isActive">Active (Visible to customers)</Label>
+              </div>
+
+              <div className="tw-flex tw-items-center tw-space-x-2">
+                <input
+                  type="checkbox"
+                  id="isBestSeller"
+                  name="isBestSeller"
+                  defaultChecked={state?.inputs?.isBestSeller ?? (product as any)?.isBestSeller ?? false}
+                  className="tw-h-4 tw-w-4 tw-rounded tw-border-gray-300 tw-text-primary focus:tw-ring-primary"
+                />
+                <Label htmlFor="isBestSeller">Best Seller (Show on homepage)</Label>
+              </div>
+            </div>
+          </div>
+
+          <div className="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-sm tw-border tw-border-gray-100">
+            <h3 className="tw-text-lg tw-font-semibold tw-mb-4">Availability</h3>
+            <input type="hidden" name="locationIds" value={JSON.stringify(selectedLocationIds)} />
+            <div className="tw-space-y-2">
+              <Label>Locations</Label>
+              <div className="tw-grid tw-grid-cols-2 tw-gap-2">
+                {locations.map((loc) => (
+                  <div key={loc.id} className="tw-flex tw-items-center tw-space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`loc-${loc.id}`}
+                      checked={selectedLocationIds.includes(loc.id)}
+                      onChange={() => handleLocationToggle(loc.id)}
+                      className="tw-h-4 tw-w-4 tw-rounded tw-border-gray-300 tw-text-primary focus:tw-ring-primary"
+                    />
+                    <Label htmlFor={`loc-${loc.id}`} className="tw-font-normal tw-cursor-pointer">
+                      {loc.name}
+                    </Label>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

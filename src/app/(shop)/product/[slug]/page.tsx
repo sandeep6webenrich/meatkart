@@ -55,11 +55,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     },
     description: product.description,
     freshnessNotes: product.freshnessNotes,
+    cutTypes: product.cutTypes,
+    freshnessDate: product.freshnessDate,
     imageUrl: product.productImages[0]?.imageUrl || "/images/no-image.png",
     weights: product.productWeights.map((pw: any) => ({
       id: pw.id,
       weight: pw.weight,
-      price: Number(pw.price)
+      price: Number(pw.price),
+      discountPrice: pw.discountPrice ? Number(pw.discountPrice) : null
     })),
     slug: product.slug
   }

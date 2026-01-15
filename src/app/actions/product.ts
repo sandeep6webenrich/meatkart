@@ -12,8 +12,11 @@ const productSchema = z.object({
   categoryId: z.string().uuid(),
   description: z.string().optional(),
   freshnessNotes: z.string().optional(),
+  cutTypes: z.string().optional(),
+  freshnessDate: z.string().optional(),
   stockQuantity: z.coerce.number().int().min(0),
   isActive: z.boolean().default(true),
+  isBestSeller: z.boolean().default(false),
   images: z.array(z.object({
     imageUrl: z.string().url(),
     isPrimary: z.boolean().default(false),
@@ -24,7 +27,7 @@ const productSchema = z.object({
     price: z.coerce.number().min(0),
     discountPrice: z.coerce.number().min(0).optional(),
     isActive: z.boolean().default(true),
-  })),
+  })).min(1, 'At least one weight option is required'),
   locationIds: z.array(z.string()).optional()
 })
 
@@ -33,6 +36,7 @@ export type ProductFormState = {
     [key: string]: string[]
   }
   message?: string
+  inputs?: any
 }
 
 export async function createProduct(prevState: ProductFormState, formData: FormData) {
@@ -48,23 +52,29 @@ export async function createProduct(prevState: ProductFormState, formData: FormD
   const weights = JSON.parse(formData.get('weights') as string || '[]')
   const locationIds = JSON.parse(formData.get('locationIds') as string || '[]')
 
-  const validatedFields = productSchema.safeParse({
+  const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     categoryId: formData.get('categoryId'),
     description: formData.get('description'),
     freshnessNotes: formData.get('freshnessNotes'),
+    cutTypes: formData.get('cutTypes'),
+    freshnessDate: formData.get('freshnessDate'),
     stockQuantity: formData.get('stockQuantity'),
     isActive: formData.get('isActive') === 'on',
+    isBestSeller: formData.get('isBestSeller') === 'on',
     images,
     weights,
     locationIds,
-  })
+  }
+
+  const validatedFields = productSchema.safeParse(rawData)
 
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to Create Product.',
+      inputs: rawData
     }
   }
 
@@ -78,8 +88,11 @@ export async function createProduct(prevState: ProductFormState, formData: FormD
         categoryId: data.categoryId,
         description: data.description,
         freshnessNotes: data.freshnessNotes,
+        cutTypes: data.cutTypes,
+        freshnessDate: data.freshnessDate ? new Date(data.freshnessDate) : null,
         stockQuantity: data.stockQuantity,
         isActive: data.isActive,
+        isBestSeller: data.isBestSeller,
         productImages: {
           create: data.images.map((img, idx) => ({
             imageUrl: img.imageUrl,
@@ -100,15 +113,16 @@ export async function createProduct(prevState: ProductFormState, formData: FormD
         }
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Database Error:', error)
     return {
-      message: 'Database Error: Failed to Create Product.',
+      message: `Database Error: ${error.message || 'Failed to Create Product'}`,
+      inputs: rawData
     }
   }
 
   revalidatePath('/admin/products')
-  redirect('/admin/products')
+  redirect('/admin/products?success=created')
 }
 
 export async function updateProduct(
@@ -127,23 +141,29 @@ export async function updateProduct(
   const weights = JSON.parse(formData.get('weights') as string || '[]')
   const locationIds = JSON.parse(formData.get('locationIds') as string || '[]')
 
-  const validatedFields = productSchema.safeParse({
+  const rawData = {
     name: formData.get('name'),
     slug: formData.get('slug'),
     categoryId: formData.get('categoryId'),
     description: formData.get('description'),
     freshnessNotes: formData.get('freshnessNotes'),
+    cutTypes: formData.get('cutTypes'),
+    freshnessDate: formData.get('freshnessDate'),
     stockQuantity: formData.get('stockQuantity'),
     isActive: formData.get('isActive') === 'on',
+    isBestSeller: formData.get('isBestSeller') === 'on',
     images,
     weights,
     locationIds,
-  })
+  }
+
+  const validatedFields = productSchema.safeParse(rawData)
 
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to Update Product.',
+      inputs: rawData
     }
   }
 
@@ -161,8 +181,11 @@ export async function updateProduct(
           categoryId: data.categoryId,
           description: data.description,
           freshnessNotes: data.freshnessNotes,
+          cutTypes: data.cutTypes,
+          freshnessDate: data.freshnessDate ? new Date(data.freshnessDate) : null,
           stockQuantity: data.stockQuantity,
           isActive: data.isActive,
+          isBestSeller: data.isBestSeller,
         },
       })
 
@@ -213,7 +236,7 @@ export async function updateProduct(
   }
 
   revalidatePath('/admin/products')
-  redirect('/admin/products')
+  redirect('/admin/products?success=updated')
 }
 
 export async function deleteProduct(id: string) {

@@ -15,11 +15,13 @@ type Product = {
 export default function AddToCartButton({
   product,
   variant = 'primary',
-  externalWeightId
+  externalWeightId,
+  cutType
 }: {
   product: Product,
   variant?: 'primary' | 'minimal',
-  externalWeightId?: string
+  externalWeightId?: string,
+  cutType?: string
 }) {
   const addItem = useCartStore((s) => s.addItem)
   const items = useCartStore((s) => s.items)
@@ -38,7 +40,7 @@ export default function AddToCartButton({
   const activeWeight = product.weights.find(w => w.id === activeWeightId)
 
   const cartItem = activeWeight
-    ? items.find(i => i.productId === product.id && i.weightId === activeWeightId)
+    ? items.find(i => i.productId === product.id && i.weightId === activeWeightId && i.cutType === cutType)
     : null
 
   const quantity = cartItem ? cartItem.quantity : 0
@@ -57,6 +59,7 @@ export default function AddToCartButton({
       weight: activeWeight.weight,
       quantity: 1,
       imageUrl: product.imageUrl,
+      cutType: cutType
     })
     toast.success('Added to cart!')
   }

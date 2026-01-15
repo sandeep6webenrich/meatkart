@@ -33,14 +33,14 @@ export default function BestSellers({ products }: { products: Product[] }) {
         </div>
       </div>
 
-      <div className="row" style={{ marginTop: 20 }}>
+      <div className="row" style={{ marginTop: 20, display: 'flex', flexWrap: 'wrap' }}>
         {availableProducts.length === 0 ? (
           <div className="col-md-12 text-center">
             <p>No products available in {city} at the moment.</p>
           </div>
         ) : (
           availableProducts.map((product) => (
-            <div className="col-md-3 col-sm-6 col-xs-6" key={product.id} style={{ marginBottom: 30 }}>
+            <div className="col-md-3 col-sm-6 col-xs-6" key={product.id} style={{ marginBottom: 30, display: 'flex' }}>
               <ProductCard product={product} />
             </div>
           ))

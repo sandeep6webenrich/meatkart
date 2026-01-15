@@ -9,6 +9,8 @@ import { useLocationStore } from '@/store/location-store'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 
+import { getLocations } from '@/app/actions/locations'
+
 export function Header() {
   const router = useRouter()
   const items = useCartStore((state) => state.items)
@@ -18,6 +20,7 @@ export function Header() {
   const [moreOpen, setMoreOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [user, setUser] = useState<User | null>(null)
+  const [locations, setLocations] = useState<{ id: string; name: string }[]>([])
   const supabase = createClient()
 
   useEffect(() => {
@@ -29,6 +32,15 @@ export function Header() {
       setUser(user)
     }
     getUser()
+
+    // Fetch locations
+    const fetchLocations = async () => {
+      const res = await getLocations()
+      if (res.success && res.locations) {
+        setLocations(res.locations)
+      }
+    }
+    fetchLocations()
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -80,8 +92,17 @@ export function Header() {
                     <span className="caret click"></span>
                   </button>
                   <ul className="dropdown-menu locations" aria-labelledby="dropdownMenu1">
-                    <li><a href="#" onClick={(e) => { e.preventDefault(); handleCitySelect('Hyderabad'); }}>Hyderabad</a></li>
-                    <li><a href="#" onClick={(e) => { e.preventDefault(); handleCitySelect('Ranigung'); }}>Ranigung</a></li>
+                    {locations.length > 0 ? (
+                      locations.map((loc) => (
+                        <li key={loc.id}>
+                          <a href="#" onClick={(e) => { e.preventDefault(); handleCitySelect(loc.name); }}>
+                            {loc.name}
+                          </a>
+                        </li>
+                      ))
+                    ) : (
+                      <li><a href="#">Loading...</a></li>
+                    )}
                   </ul>
                 </div>
               </div>
