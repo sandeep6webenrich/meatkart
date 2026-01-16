@@ -2,12 +2,8 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import Link from 'next/link'
-import { Loader2, ArrowLeft } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
     const [loading, setLoading] = useState(false)
@@ -37,58 +33,121 @@ export default function ForgotPasswordPage() {
         }
     }
 
+    // Custom styles to match homepage & login/signup pages
+    const headerStyle = {
+        fontFamily: 'noto_sansbold',
+        color: '#666666',
+        fontSize: '30px',
+        marginBottom: '20px',
+        textTransform: 'uppercase' as const
+    }
+
+    const subHeaderStyle = {
+        fontFamily: 'noto_sansregular',
+        color: '#999',
+        fontSize: '16px',
+        marginBottom: '30px'
+    }
+
+    const inputStyle = {
+        height: '50px',
+        fontSize: '16px',
+        borderRadius: '0',
+        border: '1px solid #e5e5e5',
+        boxShadow: 'none',
+        marginBottom: '20px',
+        fontFamily: 'noto_sansregular'
+    }
+
+    const labelStyle = {
+        fontFamily: 'noto_sansbold',
+        color: '#666666',
+        fontSize: '14px',
+        marginBottom: '10px',
+        fontWeight: 'normal' as const
+    }
+
+    const buttonStyle = {
+        background: '#f25648',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '0',
+        fontSize: '18px',
+        fontWeight: 'bold' as const,
+        textTransform: 'uppercase' as const,
+        padding: '12px',
+        width: '100%',
+        fontFamily: 'noto_sansbold',
+        marginTop: '10px'
+    }
+
     return (
-        <div className="tw-flex tw-items-center tw-justify-center tw-min-h-screen tw-bg-slate-50 tw-p-6">
-            <div className="tw-w-full tw-max-w-md tw-bg-white tw-border tw-border-gray-100 tw-rounded-2xl tw-shadow-xl tw-p-8">
-                <Link href="/auth/login" className="tw-inline-flex tw-items-center tw-text-gray-500 hover:tw-text-primary tw-mb-6 tw-transition-colors">
-                    <ArrowLeft size={18} className="tw-mr-2" /> Back to Login
-                </Link>
+        <div className="container" style={{ marginTop: '80px', marginBottom: '100px' }}>
+            <div className="row">
+                {/* Centered Column */}
+                <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                    <div style={{ padding: '40px', background: '#fff', border: '1px solid #e5e5e5' }}>
 
-                <div className="tw-flex tw-justify-center tw-mb-6">
-                    <img src="/images/logo.png" alt="MeatKart" className="tw-h-10 tw-w-auto" />
-                </div>
-
-                <h3 className="tw-text-2xl tw-font-bold tw-text-gray-900 tw-mb-2 tw-text-center">Reset Password</h3>
-
-                {!success ? (
-                    <>
-                        <p className="tw-text-gray-600 tw-text-center tw-mb-8">
-                            Enter your email address and we'll send you a link to reset your password.
-                        </p>
-
-                        <form onSubmit={handleSubmit} className="tw-space-y-6">
-                            <div className="tw-space-y-2">
-                                <Label htmlFor="email" className="tw-font-medium text-gray-700">Email Address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="john@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="tw-h-12"
-                                    required
-                                />
-                            </div>
-
-                            <Button type="submit" className="tw-w-full tw-h-12 tw-bg-primary hover:bg-red-700 tw-text-lg" disabled={loading}>
-                                {loading ? <Loader2 className="tw-mr-2 tw-h-5 tw-w-5 tw-animate-spin" /> : 'Send Reset Link'}
-                            </Button>
-                        </form>
-                    </>
-                ) : (
-                    <div className="tw-text-center tw-space-y-6">
-                        <div className="tw-bg-green-50 tw-text-green-800 tw-p-4 tw-rounded-lg">
-                            Check your email! We've sent you a password reset link.
+                        <div style={{ marginBottom: '20px' }}>
+                            <Link href="/auth/login" style={{ color: '#999', textDecoration: 'none', fontSize: '14px', fontFamily: 'noto_sansregular' }}>
+                                &larr; Back to Login
+                            </Link>
                         </div>
-                        <p className="tw-text-sm tw-text-gray-500">
-                            Did not receive the email? Check your spam folder or try again.
-                        </p>
-                        <Button variant="outline" onClick={() => setSuccess(false)} className="tw-w-full">
-                            Try again
-                        </Button>
+
+                        <div className="text-center" style={{ marginBottom: '30px' }}>
+                            <img src="/images/logo.png" alt="MeatKart" style={{ height: '60px' }} />
+                        </div>
+
+                        <h3 className="text-center" style={headerStyle}>Reset Password</h3>
+
+                        {!success ? (
+                            <>
+                                <p className="text-center" style={subHeaderStyle}>
+                                    Enter your email address and we&apos;ll send you a link to reset your password.
+                                </p>
+
+                                <form onSubmit={handleSubmit}>
+                                    <div className="form-group">
+                                        <label htmlFor="email" style={labelStyle}>Email Address</label>
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            className="form-control"
+                                            placeholder="Enter your email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            style={inputStyle}
+                                            required
+                                            disabled={loading}
+                                        />
+                                    </div>
+
+                                    <button type="submit" className="btn btn-default" style={buttonStyle} disabled={loading}>
+                                        {loading ? 'Sending...' : 'Send Reset Link'}
+                                    </button>
+                                </form>
+                            </>
+                        ) : (
+                            <div className="text-center">
+                                <div className="alert alert-success" style={{ borderRadius: 0, fontFamily: 'noto_sansregular' }}>
+                                    Check your email! We&apos;ve sent you a password reset link.
+                                </div>
+                                <p style={{ color: '#999', fontSize: '14px', fontFamily: 'noto_sansregular', margin: '20px 0' }}>
+                                    Did not receive the email? Check your spam folder or try again.
+                                </p>
+                                <button
+                                    onClick={() => setSuccess(false)}
+                                    className="btn btn-default"
+                                    style={{ ...buttonStyle, background: 'transparent', color: '#666', border: '1px solid #ccc', fontSize: '14px' }}
+                                >
+                                    Try again
+                                </button>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     )
 }
+

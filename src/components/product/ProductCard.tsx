@@ -123,7 +123,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="price-info">
             {mainWeight && (
               <>
-                <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#d11243' }}>
+                <span style={{ fontSize: '16px', fontWeight: 'bold', color: '#f25648', fontFamily: 'noto_sansbold' }}>
                   &#8377;{Number(mainWeight.price)}
                 </span>
                 {mainWeight.discountPrice && (

@@ -5,12 +5,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { createClient } from '@/lib/supabase/client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
 const emailSchema = z.object({
@@ -74,71 +70,141 @@ export function SimpleLoginForm({ onSuccess }: SimpleLoginFormProps) {
     }
   }
 
+  // Custom styles to match homepage
+  const headerStyle = {
+    fontFamily: 'noto_sansbold',
+    color: '#666666',
+    fontSize: '30px',
+    marginBottom: '20px',
+    textTransform: 'uppercase' as const
+  }
+
+  const subHeaderStyle = {
+    fontFamily: 'noto_sansregular',
+    color: '#999',
+    fontSize: '16px',
+    marginBottom: '30px'
+  }
+
+  const inputStyle = {
+    height: '50px',
+    fontSize: '16px',
+    borderRadius: '0',
+    border: '1px solid #e5e5e5',
+    boxShadow: 'none',
+    marginBottom: '20px',
+    fontFamily: 'noto_sansregular'
+  }
+
+  const labelStyle = {
+    fontFamily: 'noto_sansbold',
+    color: '#666666',
+    fontSize: '14px',
+    marginBottom: '10px',
+    fontWeight: 'normal' as const
+  }
+
+  const buttonStyle = {
+    background: '#f25648',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '0',
+    fontSize: '18px',
+    fontWeight: 'bold' as const,
+    textTransform: 'uppercase' as const,
+    padding: '12px',
+    width: '100%',
+    fontFamily: 'noto_sansbold',
+    marginTop: '10px'
+  }
+
   return (
-    <div className="tw-flex tw-items-center tw-justify-center tw-min-h-screen tw-bg-slate-50 tw-p-12">
-      <div className="tw-w-full tw-max-w-3xl tw-bg-white tw-border tw-border-gray-100 tw-rounded-2xl tw-shadow-2xl tw-p-12">
-        <div className="tw-flex tw-items-center tw-justify-center tw-mb-10">
-          <img src="/images/logo.png" alt="MeatKart" className="tw-h-14 tw-w-auto" />
-        </div>
-        <h3 className="tw-text-4xl tw-font-bold tw-text-gray-900 tw-mb-4">Sign in</h3>
-        <p className="tw-text-gray-600 tw-text-lg tw-mb-8">Use your email and password.</p>
-        {message && (
-          <div className="tw-bg-blue-50 tw-border tw-border-blue-200 tw-text-blue-700 tw-px-5 tw-py-4 tw-rounded-lg tw-mb-8 tw-text-base">
-            {message}
-          </div>
-        )}
-        {errorMsg && (
-          <div className="tw-bg-red-50 tw-border tw-border-red-200 tw-text-red-600 tw-px-5 tw-py-4 tw-rounded-lg tw-mb-8 tw-text-base">
-            {errorMsg}
-          </div>
-        )}
-        <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} className="tw-space-y-8">
-          <div className="tw-space-y-2">
-            <Label htmlFor="email" className="tw-text-lg tw-font-medium tw-text-gray-700">Email</Label>
-            <Input
-              id="email"
-              placeholder="john@example.com"
-              type="email"
-              className="tw-h-16 tw-text-lg tw-bg-gray-50 tw-border-gray-200 tw-focus:ring-2 tw-focus:ring-primary/20 tw-focus:border-primary tw-rounded-xl tw-transition-all"
-              {...emailForm.register('email')}
-              disabled={loading}
-            />
-            {emailForm.formState.errors.email && (
-              <p className="tw-text-sm tw-text-red-500 tw-mt-1">{emailForm.formState.errors.email.message}</p>
-            )}
-          </div>
-          <div className="tw-space-y-2">
-            <Label htmlFor="password" className="tw-text-lg tw-font-medium tw-text-gray-700">Password</Label>
-            <Input
-              id="password"
-              placeholder="••••••••"
-              type="password"
-              className="tw-h-16 tw-text-lg tw-bg-gray-50 tw-border-gray-200 tw-focus:ring-2 tw-focus:ring-primary/20 tw-focus:border-primary tw-rounded-xl tw-transition-all"
-              {...emailForm.register('password')}
-              disabled={loading}
-            />
-            {emailForm.formState.errors.password && (
-              <p className="tw-text-sm tw-text-red-500 tw-mt-1">{emailForm.formState.errors.password.message}</p>
-            )}
-            <div className="tw-flex tw-justify-end">
-              <Link href="/auth/forgot-password" className="tw-text-primary tw-font-medium tw-text-sm hover:tw-underline">
-                Forgot Password?
-              </Link>
+    <div className="container" style={{ marginTop: '80px', marginBottom: '100px' }}>
+      <div className="row">
+        {/* Centered Column */}
+        <div className="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+          <div style={{ padding: '40px', background: '#fff', border: '1px solid #e5e5e5' }}>
+
+            <div className="text-center" style={{ marginBottom: '30px' }}>
+              <img src="/images/logo.png" alt="MeatKart" style={{ height: '60px' }} />
             </div>
+
+            <h3 className="text-center" style={headerStyle}>Sign In</h3>
+            <p className="text-center" style={subHeaderStyle}>Use your email and password to access your account.</p>
+
+            {message && (
+              <div className="alert alert-info" style={{ borderRadius: 0 }}>
+                {message}
+              </div>
+            )}
+
+            {errorMsg && (
+              <div className="alert alert-danger" style={{ borderRadius: 0 }}>
+                {errorMsg}
+              </div>
+            )}
+
+            <form onSubmit={emailForm.handleSubmit(onEmailSubmit)}>
+              <div className="form-group">
+                <label htmlFor="email" style={labelStyle}>Email Address</label>
+                <input
+                  id="email"
+                  type="email"
+                  className="form-control"
+                  placeholder="Enter your email"
+                  style={inputStyle}
+                  {...emailForm.register('email')}
+                  disabled={loading}
+                />
+                {emailForm.formState.errors.email && (
+                  <p className="text-danger" style={{ fontSize: '13px', marginTop: '-15px' }}>
+                    {emailForm.formState.errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="password" style={labelStyle}>Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  className="form-control"
+                  placeholder="Enter your password"
+                  style={inputStyle}
+                  {...emailForm.register('password')}
+                  disabled={loading}
+                />
+                {emailForm.formState.errors.password && (
+                  <p className="text-danger" style={{ fontSize: '13px', marginTop: '-15px' }}>
+                    {emailForm.formState.errors.password.message}
+                  </p>
+                )}
+
+                <div className="text-right" style={{ marginTop: '-10px', marginBottom: '20px' }}>
+                  <Link href="/auth/forgot-password" style={{ color: '#f25648', fontSize: '14px', fontFamily: 'noto_sansregular', textDecoration: 'none' }}>
+                    Forgot Password?
+                  </Link>
+                </div>
+              </div>
+
+              <button type="submit" className="btn btn-default" style={buttonStyle} disabled={loading}>
+                {loading ? 'Signing In...' : 'Sign In'}
+              </button>
+
+              <div className="text-center" style={{ marginTop: '30px' }}>
+                <p style={{ color: '#666', fontSize: '15px' }}>
+                  Don&apos;t have an account?{' '}
+                  <Link href="/auth/signup" style={{ color: '#f25648', fontWeight: 'bold' }}>
+                    Create an account
+                  </Link>
+                </p>
+              </div>
+            </form>
+
           </div>
-          <Button type="submit" className="tw-w-full tw-h-16 tw-bg-primary tw-hover:bg-red-700 tw-text-white tw-text-xl tw-font-semibold tw-rounded-xl tw-shadow-2xl tw-transition-all" disabled={loading}>
-            {loading ? <Loader2 className="tw-mr-2 tw-h-7 tw-w-7 tw-animate-spin" /> : 'Sign In'}
-          </Button>
-          <div className="tw-text-center">
-            <p className="tw-text-sm tw-text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/signup" className="tw-font-medium tw-text-primary hover:tw-underline">
-                Create an account
-              </Link>
-            </p>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   )
 }
+

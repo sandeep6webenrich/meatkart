@@ -33,7 +33,63 @@ export default function AddToCartButton({
     setMounted(true)
   }, [])
 
-  if (!mounted) return <button className="tw-block tw-w-full tw-rounded-lg tw-px-5 tw-py-2.5 tw-font-bold tw-uppercase tw-text-sm tw-bg-gray-100 tw-text-gray-400" disabled>Add to cart</button>
+  const btnStyle = {
+    background: '#f25648',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '0',
+    fontSize: '18px',
+    fontWeight: 'bold' as const,
+    textTransform: 'uppercase' as const,
+    padding: '12px 20px',
+    width: '100%',
+    fontFamily: 'noto_sansbold',
+    cursor: 'pointer',
+    transition: 'background 0.3s'
+  }
+
+  const minimalBtnStyle = {
+    ...btnStyle,
+    background: '#fff',
+    color: '#f25648',
+    border: '1px solid #f25648'
+  }
+
+  const disabledBtnStyle = {
+    ...btnStyle,
+    background: '#ccc',
+    cursor: 'not-allowed'
+  }
+
+  const qtyContainerStyle = {
+    display: 'inline-block',
+    border: '1px solid #f25648',
+    background: '#fff',
+    borderRadius: '4px',
+    padding: '5px',
+    width: '100%',
+    maxWidth: '160px',
+    textAlign: 'center' as const
+  }
+
+  const qtyBtnStyle = {
+    background: 'none',
+    border: 'none',
+    color: '#f25648',
+    fontSize: '20px',
+    fontWeight: 'bold' as const,
+    padding: '0 15px',
+    cursor: 'pointer'
+  }
+
+  const qtyTextStyle = {
+    fontSize: '18px',
+    fontWeight: 'bold' as const,
+    margin: '0 10px',
+    color: '#333'
+  }
+
+  if (!mounted) return <button style={disabledBtnStyle} disabled>Add to cart</button>
 
   // Use externalWeightId if provided, otherwise default to first weight
   const activeWeightId = externalWeightId || product.weights[0]?.id
@@ -80,34 +136,30 @@ export default function AddToCartButton({
 
   if (quantity > 0) {
     return (
-      <div className="tw-flex tw-items-center tw-justify-center tw-gap-3 tw-bg-white tw-border tw-border-primary tw-rounded-lg tw-px-2 tw-py-1 tw-w-full tw-max-w-[140px] tw-mx-auto">
-        <button
-          onClick={handleDecrement}
-          className="tw-bg-transparent tw-border-none tw-text-primary tw-text-lg tw-font-bold tw-px-2 hover:tw-bg-red-50 tw-rounded"
-        >
-          -
-        </button>
-        <span className="tw-font-bold tw-min-w-[20px] tw-text-center tw-text-gray-900">{quantity}</span>
-        <button
-          onClick={handleIncrement}
-          className="tw-bg-transparent tw-border-none tw-text-primary tw-text-lg tw-font-bold tw-px-2 hover:tw-bg-red-50 tw-rounded"
-        >
-          +
-        </button>
+      <div style={qtyContainerStyle}>
+        <button onClick={handleDecrement} style={qtyBtnStyle}>-</button>
+        <span style={qtyTextStyle}>{quantity}</span>
+        <button onClick={handleIncrement} style={qtyBtnStyle}>+</button>
       </div>
     )
   }
 
   return (
     <button
-      className={`tw-block tw-w-full tw-rounded-lg tw-px-5 tw-py-2.5 tw-font-bold tw-uppercase tw-text-sm tw-transition-colors ${variant === 'minimal'
-        ? 'tw-bg-white tw-text-primary tw-border tw-border-primary hover:tw-bg-red-50'
-        : 'tw-bg-primary tw-text-white tw-border-none hover:tw-bg-red-600'
-        }`}
+      style={variant === 'minimal' ? minimalBtnStyle : btnStyle}
       type="button"
       onClick={handleAdd}
+      onMouseOver={(e) => {
+        if (variant !== 'minimal') e.currentTarget.style.background = '#d14030';
+        else e.currentTarget.style.background = '#fff5f5';
+      }}
+      onMouseOut={(e) => {
+        if (variant !== 'minimal') e.currentTarget.style.background = '#f25648';
+        else e.currentTarget.style.background = '#fff';
+      }}
     >
       Add to cart
     </button>
   )
 }
+

@@ -38,7 +38,7 @@ export default async function AccountPage() {
       }
     }
   })
-  
+
   const wishlistCount = user?.wishlist?._count?.items || 0
 
   return (
@@ -55,64 +55,64 @@ export default async function AccountPage() {
                 <span className="tw-font-medium">Mobile:</span> {user?.phone}
               </p>
               <p className="tw-flex tw-items-center tw-gap-2">
-                 <span className="tw-font-medium">Status:</span> 
-                 <span className="tw-bg-green-100 tw-text-green-800 tw-px-2 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium">Active</span>
+                <span className="tw-font-medium">Status:</span>
+                <span className="tw-bg-green-100 tw-text-green-800 tw-px-2 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium">Active</span>
               </p>
             </div>
           </div>
           {user?.wallet && (
-             <div className="tw-bg-gray-50 tw-p-4 tw-rounded-lg tw-border tw-min-w-[200px]">
-                <p className="tw-text-sm tw-text-gray-500 tw-mb-1">Wallet Balance</p>
-                <p className="tw-text-2xl tw-font-bold tw-text-primary">₹{Number(user.wallet.balance).toFixed(2)}</p>
-             </div>
+            <div className="tw-bg-gray-50 tw-p-4 tw-rounded-lg tw-border tw-min-w-[200px]">
+              <p className="tw-text-sm tw-text-gray-500 tw-mb-1">Wallet Balance</p>
+              <p className="tw-text-2xl tw-font-bold tw-text-primary">₹{Number(user.wallet.balance).toFixed(2)}</p>
+            </div>
           )}
         </div>
       </div>
 
       <div className="tw-grid tw-grid-cols-2 md:tw-grid-cols-4 tw-gap-4">
         <Link href="/account/orders" className="tw-group">
-            <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-                <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-                    <div className="tw-bg-blue-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-blue-100 tw-transition-colors">
-                        <Package className="tw-h-6 tw-w-6 tw-text-blue-600" />
-                    </div>
-                    <h3 className="tw-font-medium tw-text-gray-900">Orders</h3>
-                    <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Check status</p>
-                </CardContent>
-            </Card>
+          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
+            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
+              <div className="tw-bg-blue-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-blue-100 tw-transition-colors">
+                <Package className="tw-h-6 tw-w-6 tw-text-blue-600" />
+              </div>
+              <h3 className="tw-font-medium tw-text-gray-900">Orders</h3>
+              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Check status</p>
+            </CardContent>
+          </Card>
         </Link>
         <Link href="/account/addresses" className="tw-group">
-            <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-                <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-                    <div className="tw-bg-orange-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-orange-100 tw-transition-colors">
-                        <MapPin className="tw-h-6 tw-w-6 tw-text-orange-600" />
-                    </div>
-                    <h3 className="tw-font-medium tw-text-gray-900">Addresses</h3>
-                    <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Manage delivery</p>
-                </CardContent>
-            </Card>
+          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
+            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
+              <div className="tw-bg-orange-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-orange-100 tw-transition-colors">
+                <MapPin className="tw-h-6 tw-w-6 tw-text-orange-600" />
+              </div>
+              <h3 className="tw-font-medium tw-text-gray-900">Addresses</h3>
+              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Manage delivery</p>
+            </CardContent>
+          </Card>
         </Link>
         <Link href="/account/wishlist" className="tw-group">
-            <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-                <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-                    <div className="tw-bg-pink-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-pink-100 tw-transition-colors">
-                        <Heart className="tw-h-6 tw-w-6 tw-text-pink-600" />
-                    </div>
-                    <h3 className="tw-font-medium tw-text-gray-900">Wishlist</h3>
-                    <p className="tw-text-xs tw-text-gray-500 tw-mt-1">{wishlistCount} Saved items</p>
-                </CardContent>
-            </Card>
+          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
+            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
+              <div className="tw-bg-pink-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-pink-100 tw-transition-colors">
+                <Heart className="tw-h-6 tw-w-6 tw-text-pink-600" />
+              </div>
+              <h3 className="tw-font-medium tw-text-gray-900">Wishlist</h3>
+              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">{wishlistCount} Saved items</p>
+            </CardContent>
+          </Card>
         </Link>
         <Link href="/account/profile" className="tw-group">
-            <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-                <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-                    <div className="tw-bg-purple-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-purple-100 tw-transition-colors">
-                        <User className="tw-h-6 tw-w-6 tw-text-purple-600" />
-                    </div>
-                    <h3 className="tw-font-medium tw-text-gray-900">Profile</h3>
-                    <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Edit details</p>
-                </CardContent>
-            </Card>
+          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
+            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
+              <div className="tw-bg-purple-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-purple-100 tw-transition-colors">
+                <User className="tw-h-6 tw-w-6 tw-text-purple-600" />
+              </div>
+              <h3 className="tw-font-medium tw-text-gray-900">Profile</h3>
+              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Edit details</p>
+            </CardContent>
+          </Card>
         </Link>
       </div>
 
@@ -134,11 +134,10 @@ export default async function AccountPage() {
                       <p className="tw-text-sm tw-text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
                     </div>
                     <div className="tw-text-right">
-                      <span className={`tw-inline-block tw-px-2 tw-py-1 tw-rounded-full tw-text-xs tw-font-medium tw-capitalize ${
-                        order.status === 'delivered' ? 'tw-bg-green-100 tw-text-green-800' :
-                        order.status === 'cancelled' ? 'tw-bg-red-100 tw-text-red-800' :
-                        'tw-bg-yellow-100 tw-text-yellow-800'
-                      }`}>
+                      <span className={`tw-inline-block tw-px-2 tw-py-1 tw-rounded-full tw-text-xs tw-font-medium tw-capitalize ${order.status === 'delivered' ? 'tw-bg-green-100 tw-text-green-800' :
+                          order.status === 'cancelled' ? 'tw-bg-red-100 tw-text-red-800' :
+                            'tw-bg-yellow-100 tw-text-yellow-800'
+                        }`}>
                         {order.status}
                       </span>
                     </div>
