@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { AccountSidebar } from '@/components/account/AccountSidebar'
 
 export default async function AccountLayout({
@@ -15,19 +16,28 @@ export default async function AccountLayout({
   }
 
   return (
-    <div className="tw-bg-gray-50 tw-min-h-screen tw-py-8">
-      <div className="tw-container tw-mx-auto tw-px-4">
-        <h1 className="tw-text-2xl tw-font-bold tw-mb-8">My Account</h1>
-
-        <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-4 tw-gap-8">
-          <div className="lg:tw-col-span-1">
-            <AccountSidebar />
-          </div>
-          <div className="lg:tw-col-span-3">
-            {children}
-          </div>
+    <>
+      <div className="breadcrumps-bg">
+        <div className="container">
+          <ol className="breadcrumb">
+            <li><Link href="/">Home</Link></li>
+            <li className="active">My Account</li>
+          </ol>
         </div>
       </div>
-    </div>
+
+      <section className="mutton-section">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-3">
+              <AccountSidebar />
+            </div>
+            <div className="col-md-9">
+              {children}
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   )
 }

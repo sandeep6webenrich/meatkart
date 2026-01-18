@@ -19,41 +19,37 @@ export default async function ProfilePage() {
   if (!user) return <div>User not found</div>
 
   return (
-    <div className="tw-space-y-6">
-      <h2 className="tw-text-2xl tw-font-bold">Profile & Security</h2>
+    <div style={{ background: '#fff', padding: '30px' }}>
+      <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '20px', margin: '0 0 20px 0', borderBottom: '1px solid #ececec', paddingBottom: '15px' }}>
+        PROFILE & SECURITY
+      </h2>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Personal Information</CardTitle>
-        </CardHeader>
-        <CardContent>
+      <div style={{ marginBottom: '30px' }}>
+        <h3 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '16px', marginBottom: '15px' }}>Personal Information</h3>
+        <div style={{ border: '1px solid #ececec', padding: '20px' }}>
           <ProfileForm user={user} />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Actions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="tw-space-y-4">
-            <div className="tw-flex tw-items-center tw-justify-between tw-border-b tw-pb-4">
-              <div>
-                <h4 className="tw-font-medium">Log out from all devices</h4>
-                <p className="tw-text-sm tw-text-gray-500">Secure your account by logging out from all other sessions.</p>
-              </div>
-              <Button variant="outline">Log Out All</Button>
-            </div>
-            <div className="tw-flex tw-items-center tw-justify-between">
-              <div>
-                <h4 className="tw-font-medium tw-text-red-600">Delete Account</h4>
-                <p className="tw-text-sm tw-text-gray-500">Permanently remove your account and data.</p>
-              </div>
-              <Button variant="destructive">Delete Account</Button>
-            </div>
+      <div>
+        <h3 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '16px', marginBottom: '15px' }}>Account Actions</h3>
+        <div style={{ border: '1px solid #ececec', padding: '20px' }}>
+          <div style={{ borderBottom: '1px solid #f5f5f5', paddingBottom: '15px', marginBottom: '15px' }}>
+            <h4 style={{ fontFamily: 'noto_sansbold', fontSize: '14px', color: '#555', margin: '0 0 5px 0' }}>Log out from all devices</h4>
+            <p style={{ color: '#999', fontSize: '13px', margin: '0 0 10px 0' }}>Secure your account by logging out from all other sessions.</p>
+            <button style={{ background: '#fff', border: '1px solid #ccc', color: '#666', padding: '6px 15px', fontSize: '13px', cursor: 'pointer' }}>
+              LOG OUT ALL
+            </button>
           </div>
-        </CardContent>
-      </Card>
+          <div>
+            <h4 style={{ fontFamily: 'noto_sansbold', fontSize: '14px', color: '#d9534f', margin: '0 0 5px 0' }}>Delete Account</h4>
+            <p style={{ color: '#999', fontSize: '13px', margin: '0 0 10px 0' }}>Permanently remove your account and data.</p>
+            <button style={{ background: '#d9534f', border: 'none', color: '#fff', padding: '6px 15px', fontSize: '13px', cursor: 'pointer' }}>
+              DELETE ACCOUNT
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

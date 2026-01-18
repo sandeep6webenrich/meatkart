@@ -38,120 +38,137 @@ export default async function OrderDetailsPage({ params }: { params: Promise<{ i
   const deliveryAddress = order.deliveryAddress as any
 
   return (
-    <div className="tw-space-y-6">
-      <div className="tw-flex tw-items-center tw-gap-4">
+    <div className="account-order-details">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '25px' }}>
         <Link href="/account/orders">
-          <Button variant="outline" size="icon">
+          <button className="btn btn-default" style={{ borderRadius: 0, padding: '5px 12px' }}>
             <ArrowLeft size={16} />
-          </Button>
+          </button>
         </Link>
         <div>
-          <h1 className="tw-text-2xl tw-font-bold">Order #{order.orderNumber}</h1>
-          <p className="tw-text-sm tw-text-gray-500">
+          <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '24px', margin: 0, textTransform: 'uppercase' }}>
+            Order #{order.orderNumber}
+          </h2>
+          <p style={{ margin: 0, color: '#999', fontSize: '12px' }}>
             Placed on {format(new Date(order.createdAt), "PPP")}
           </p>
         </div>
       </div>
 
-      <div className="tw-flex tw-gap-3">
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '30px' }}>
         <Link href={`/account/orders/${order.id}/invoice`}>
-          <Button variant="outline" className="tw-flex tw-gap-2">
-            <FileText size={16} /> Download Invoice
-          </Button>
+          <button className="btn btn-default" style={{ borderRadius: 0, fontSize: '12px', fontWeight: 'bold' }}>
+            <FileText size={16} style={{ marginRight: '8px', verticalAlign: 'text-bottom' }} /> DOWNLOAD INVOICE
+          </button>
         </Link>
-        <Button className="tw-flex tw-gap-2">
-          <RefreshCw size={16} /> Reorder
-        </Button>
+        <button className="btn btn-danger" style={{ borderRadius: 0, background: '#f25648', borderColor: '#f25648', fontSize: '12px', fontWeight: 'bold' }}>
+          <RefreshCw size={16} style={{ marginRight: '8px', verticalAlign: 'text-bottom' }} /> REORDER
+        </button>
       </div>
 
-      <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-6">
-        <div className="md:tw-col-span-2 tw-space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Items</CardTitle>
-            </CardHeader>
-            <CardContent className="tw-space-y-4">
+      <div className="row">
+        <div className="col-md-8">
+          {/* Items Panel */}
+          <div style={{ border: '1px solid #eee', background: '#fff', marginBottom: '30px' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #eee', background: '#fcfcfc' }}>
+              <h4 style={{ margin: 0, fontFamily: 'noto_sansbold', color: '#666', fontSize: '16px' }}>ITEMS</h4>
+            </div>
+            <div style={{ padding: '20px' }}>
               {order.orderItems.map((item) => (
-                <div key={item.id} className="tw-flex tw-items-center tw-justify-between tw-border-b tw-pb-4 last:tw-border-0 last:tw-pb-0">
-                  <div className="tw-flex tw-items-center tw-gap-4">
-                    <div className="tw-h-16 tw-w-16 tw-bg-gray-100 tw-rounded-lg tw-flex tw-items-center tw-justify-center">
-                      <Package className="tw-text-gray-400" size={24} />
+                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 0', borderBottom: '1px solid #f5f5f5' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{ width: '60px', height: '60px', background: '#f9f9f9', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #eee' }}>
+                      <Package size={24} color="#ccc" />
                     </div>
                     <div>
-                      <p className="tw-font-medium">{item.product.name}</p>
-                      <p className="tw-text-sm tw-text-gray-500">
+                      <p style={{ margin: 0, color: '#555', fontWeight: 'bold', fontSize: '14px' }}>{item.product.name}</p>
+                      <p style={{ margin: 0, color: '#999', fontSize: '12px' }}>
                         {item.productWeight.weight} • {item.cutType || 'Standard'}
                       </p>
                     </div>
                   </div>
-                  <div className="tw-text-right">
-                    <p className="tw-font-medium">₹{Number(item.totalPrice).toFixed(2)}</p>
-                    <p className="tw-text-sm tw-text-gray-500">Qty: {item.quantity}</p>
+                  <div className="text-right">
+                    <p style={{ margin: 0, color: '#333', fontWeight: 'bold' }}>₹{Number(item.totalPrice).toFixed(2)}</p>
+                    <p style={{ margin: 0, color: '#999', fontSize: '11px' }}>Qty: {item.quantity}</p>
                   </div>
                 </div>
               ))}
-              <Separator />
-              <div className="tw-space-y-2">
-                <div className="tw-flex tw-justify-between tw-text-sm">
-                  <span className="tw-text-gray-500">Subtotal</span>
-                  <span>₹{Number(order.totalAmount).toFixed(2)}</span>
+
+              <div style={{ marginTop: '20px', padding: '15px', background: '#fcfcfc' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontSize: '13px' }}>
+                  <span style={{ color: '#777' }}>Subtotal</span>
+                  <span style={{ color: '#333' }}>₹{Number(order.totalAmount).toFixed(2)}</span>
                 </div>
-                <div className="tw-flex tw-justify-between tw-text-sm">
-                  <span className="tw-text-gray-500">Delivery</span>
-                  <span>₹0.00</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontSize: '13px' }}>
+                  <span style={{ color: '#777' }}>Delivery</span>
+                  <span style={{ color: '#333' }}>₹0.00</span>
                 </div>
-                <Separator className="tw-my-2" />
-                <div className="tw-flex tw-justify-between tw-font-bold">
-                  <span>Total</span>
-                  <span>₹{Number(order.totalAmount).toFixed(2)}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #eee', fontSize: '16px', fontWeight: 'bold' }}>
+                  <span style={{ color: '#666' }}>Total</span>
+                  <span style={{ color: '#f25648' }}>₹{Number(order.totalAmount).toFixed(2)}</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        <div className="tw-space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Delivery Details</CardTitle>
-            </CardHeader>
-            <CardContent className="tw-space-y-4">
-              <div>
-                <p className="tw-text-sm tw-font-medium tw-text-gray-500 tw-mb-1">Address</p>
-                <div className="tw-flex tw-items-start tw-gap-2">
-                  <MapPin size={16} className="tw-mt-0.5 tw-text-gray-400" />
-                  <div className="tw-text-sm">
-                    <p className="tw-font-medium">{deliveryAddress?.name}</p>
-                    <p>{deliveryAddress?.street}</p>
-                    <p>{deliveryAddress?.city}, {deliveryAddress?.pincode}</p>
-                    <p className="tw-mt-1">{deliveryAddress?.phone}</p>
-                  </div>
+        <div className="col-md-4">
+          {/* Delivery Panel */}
+          <div style={{ border: '1px solid #eee', background: '#fff', marginBottom: '30px' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #eee', background: '#fcfcfc' }}>
+              <h4 style={{ margin: 0, fontFamily: 'noto_sansbold', color: '#666', fontSize: '16px' }}>DELIVERY DETAILS</h4>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'start', gap: '10px' }}>
+                <MapPin size={18} color="#ccc" style={{ marginTop: '2px' }} />
+                <div style={{ fontSize: '13px', color: '#666' }}>
+                  <p style={{ fontWeight: 'bold', margin: '0 0 5px 0' }}>{deliveryAddress?.name}</p>
+                  <p style={{ margin: '0 0 2px 0' }}>{deliveryAddress?.street}</p>
+                  <p style={{ margin: '0 0 10px 0' }}>{deliveryAddress?.city}, {deliveryAddress?.pincode}</p>
+                  <p style={{ margin: 0, color: '#999' }}>{deliveryAddress?.phone}</p>
                 </div>
               </div>
-              <Separator />
-              <div>
-                <p className="tw-text-sm tw-font-medium tw-text-gray-500 tw-mb-1">Status</p>
-                <Badge variant={order.status === 'delivered' ? 'default' : 'secondary'} className="tw-capitalize">
+              <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #f5f5f5' }}>
+                <p style={{ fontSize: '11px', color: '#999', margin: '0 0 5px 0', textTransform: 'uppercase' }}>Status</p>
+                <span style={{
+                  fontSize: '11px',
+                  fontWeight: 'bold',
+                  padding: '2px 8px',
+                  textTransform: 'uppercase',
+                  background: order.status === 'delivered' ? '#dff0d8' : '#fcf8e3',
+                  color: order.status === 'delivered' ? '#3c763d' : '#8a6d3b'
+                }}>
                   {order.status}
-                </Badge>
+                </span>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="tw-flex tw-items-center tw-gap-2">
-                <CreditCard size={16} className="tw-text-gray-400" />
-                <span className="tw-text-sm tw-capitalize">{order.paymentMethod}</span>
+          {/* Payment Panel */}
+          <div style={{ border: '1px solid #eee', background: '#fff' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #eee', background: '#fcfcfc' }}>
+              <h4 style={{ margin: 0, fontFamily: 'noto_sansbold', color: '#666', fontSize: '16px' }}>PAYMENT</h4>
+            </div>
+            <div style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#666' }}>
+                <CreditCard size={18} color="#ccc" />
+                <span style={{ textTransform: 'uppercase' }}>{order.paymentMethod}</span>
               </div>
-              <Badge variant={order.paymentStatus === 'paid' ? 'default' : 'outline'} className="tw-mt-2 tw-capitalize">
-                {order.paymentStatus}
-              </Badge>
-            </CardContent>
-          </Card>
+              <div style={{ marginTop: '10px' }}>
+                <span style={{
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  padding: '1px 6px',
+                  border: '1px solid',
+                  textTransform: 'uppercase',
+                  borderColor: order.paymentStatus === 'paid' ? '#5cb85c' : '#ccc',
+                  color: order.paymentStatus === 'paid' ? '#5cb85c' : '#999'
+                }}>
+                  {order.paymentStatus}
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

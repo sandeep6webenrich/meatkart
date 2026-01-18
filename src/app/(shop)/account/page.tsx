@@ -42,141 +42,140 @@ export default async function AccountPage() {
   const wishlistCount = user?.wishlist?._count?.items || 0
 
   return (
-    <div className="tw-space-y-6">
-      <div className="tw-bg-white tw-rounded-xl tw-p-6 tw-shadow-sm tw-border">
-        <div className="tw-flex tw-flex-col md:tw-flex-row md:tw-items-center tw-justify-between tw-gap-4">
-          <div>
-            <h2 className="tw-text-xl tw-font-semibold tw-mb-2">Hello, {user?.name || authUser.email}</h2>
-            <div className="tw-text-gray-500 tw-space-y-1">
-              <p className="tw-flex tw-items-center tw-gap-2">
-                <span className="tw-font-medium">Email:</span> {user?.email}
-              </p>
-              <p className="tw-flex tw-items-center tw-gap-2">
-                <span className="tw-font-medium">Mobile:</span> {user?.phone}
-              </p>
-              <p className="tw-flex tw-items-center tw-gap-2">
-                <span className="tw-font-medium">Status:</span>
-                <span className="tw-bg-green-100 tw-text-green-800 tw-px-2 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium">Active</span>
+    <div className="account-overview">
+      {/* Header Info */}
+      <div style={{ background: '#f9f9f9', padding: '25px', border: '1px solid #eee', marginBottom: '30px' }}>
+        <div className="row">
+          <div className="col-md-8">
+            <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '24px', margin: '0 0 15px 0' }}>
+              Hello, {user?.name || authUser.email}
+            </h2>
+            <div style={{ color: '#888', fontFamily: 'noto_sansregular', fontSize: '15px' }}>
+              <p style={{ margin: '0 0 5px 0' }}><strong>Email:</strong> {user?.email}</p>
+              <p style={{ margin: '0 0 5px 0' }}><strong>Mobile:</strong> {user?.phone}</p>
+              <p style={{ margin: '0' }}>
+                <span style={{ background: '#dff0d8', color: '#3c763d', padding: '2px 10px', fontSize: '12px', fontWeight: 'bold' }}>ACTIVE</span>
               </p>
             </div>
           </div>
           {user?.wallet && (
-            <div className="tw-bg-gray-50 tw-p-4 tw-rounded-lg tw-border tw-min-w-[200px]">
-              <p className="tw-text-sm tw-text-gray-500 tw-mb-1">Wallet Balance</p>
-              <p className="tw-text-2xl tw-font-bold tw-text-primary">₹{Number(user.wallet.balance).toFixed(2)}</p>
+            <div className="col-md-4 text-right">
+              <div style={{ background: '#fff', padding: '15px', border: '1px solid #eee' }}>
+                <p style={{ color: '#999', fontSize: '13px', textTransform: 'uppercase', marginBottom: '5px' }}>Wallet Balance</p>
+                <p style={{ color: '#f25648', fontSize: '28px', fontWeight: 'bold', margin: 0 }}>₹{Number(user.wallet.balance).toFixed(2)}</p>
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      <div className="tw-grid tw-grid-cols-2 md:tw-grid-cols-4 tw-gap-4">
-        <Link href="/account/orders" className="tw-group">
-          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-              <div className="tw-bg-blue-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-blue-100 tw-transition-colors">
-                <Package className="tw-h-6 tw-w-6 tw-text-blue-600" />
-              </div>
-              <h3 className="tw-font-medium tw-text-gray-900">Orders</h3>
-              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Check status</p>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/account/addresses" className="tw-group">
-          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-              <div className="tw-bg-orange-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-orange-100 tw-transition-colors">
-                <MapPin className="tw-h-6 tw-w-6 tw-text-orange-600" />
-              </div>
-              <h3 className="tw-font-medium tw-text-gray-900">Addresses</h3>
-              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Manage delivery</p>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/account/wishlist" className="tw-group">
-          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-              <div className="tw-bg-pink-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-pink-100 tw-transition-colors">
-                <Heart className="tw-h-6 tw-w-6 tw-text-pink-600" />
-              </div>
-              <h3 className="tw-font-medium tw-text-gray-900">Wishlist</h3>
-              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">{wishlistCount} Saved items</p>
-            </CardContent>
-          </Card>
-        </Link>
-        <Link href="/account/profile" className="tw-group">
-          <Card className="tw-h-full hover:tw-shadow-md tw-transition-shadow tw-cursor-pointer">
-            <CardContent className="tw-flex tw-flex-col tw-items-center tw-justify-center tw-p-6 tw-text-center">
-              <div className="tw-bg-purple-50 tw-p-3 tw-rounded-full tw-mb-3 group-hover:tw-bg-purple-100 tw-transition-colors">
-                <User className="tw-h-6 tw-w-6 tw-text-purple-600" />
-              </div>
-              <h3 className="tw-font-medium tw-text-gray-900">Profile</h3>
-              <p className="tw-text-xs tw-text-gray-500 tw-mt-1">Edit details</p>
-            </CardContent>
-          </Card>
-        </Link>
+      {/* Action Grid */}
+      <div className="row" style={{ marginBottom: '30px' }}>
+        <div className="col-md-3 col-sm-6" style={{ marginBottom: '20px' }}>
+          <Link href="/account/orders" style={{ textDecoration: 'none' }}>
+            <div className="text-center" style={{ border: '1px solid #eee', padding: '20px', transition: 'all 0.3s' }}>
+              <Package size={32} color="#4285f4" style={{ marginBottom: '10px' }} />
+              <h4 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '16px', margin: '10px 0 5px' }}>ORDERS</h4>
+              <p style={{ color: '#999', fontSize: '12px', margin: 0 }}>Check status</p>
+            </div>
+          </Link>
+        </div>
+        <div className="col-md-3 col-sm-6" style={{ marginBottom: '20px' }}>
+          <Link href="/account/addresses" style={{ textDecoration: 'none' }}>
+            <div className="text-center" style={{ border: '1px solid #eee', padding: '20px' }}>
+              <MapPin size={32} color="#f4b400" style={{ marginBottom: '10px' }} />
+              <h4 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '16px', margin: '10px 0 5px' }}>ADDRESSES</h4>
+              <p style={{ color: '#999', fontSize: '12px', margin: 0 }}>Manage delivery</p>
+            </div>
+          </Link>
+        </div>
+        <div className="col-md-3 col-sm-6" style={{ marginBottom: '20px' }}>
+          <Link href="/account/wishlist" style={{ textDecoration: 'none' }}>
+            <div className="text-center" style={{ border: '1px solid #eee', padding: '20px' }}>
+              <Heart size={32} color="#db4437" style={{ marginBottom: '10px' }} />
+              <h4 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '16px', margin: '10px 0 5px' }}>WISHLIST</h4>
+              <p style={{ color: '#999', fontSize: '12px', margin: 0 }}>{wishlistCount} Saved items</p>
+            </div>
+          </Link>
+        </div>
+        <div className="col-md-3 col-sm-6" style={{ marginBottom: '20px' }}>
+          <Link href="/account/profile" style={{ textDecoration: 'none' }}>
+            <div className="text-center" style={{ border: '1px solid #eee', padding: '20px' }}>
+              <User size={32} color="#a142f4" style={{ marginBottom: '10px' }} />
+              <h4 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '16px', margin: '10px 0 5px' }}>PROFILE</h4>
+              <p style={{ color: '#999', fontSize: '12px', margin: 0 }}>Edit details</p>
+            </div>
+          </Link>
+        </div>
       </div>
 
-      <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-6">
-        <Card>
-          <CardHeader className="tw-flex tw-flex-row tw-items-center tw-justify-between">
-            <CardTitle className="tw-text-lg">Recent Orders</CardTitle>
-            <Link href="/account/orders">
-              <Button variant="link" className="tw-text-primary">View All</Button>
-            </Link>
-          </CardHeader>
-          <CardContent>
-            {user?.orders && user.orders.length > 0 ? (
-              <div className="tw-space-y-4">
-                {user.orders.map(order => (
-                  <div key={order.id} className="tw-flex tw-items-center tw-justify-between tw-border-b tw-pb-3 last:tw-border-0 last:tw-pb-0">
-                    <div>
-                      <p className="tw-font-medium">#{order.orderNumber}</p>
-                      <p className="tw-text-sm tw-text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</p>
-                    </div>
-                    <div className="tw-text-right">
-                      <span className={`tw-inline-block tw-px-2 tw-py-1 tw-rounded-full tw-text-xs tw-font-medium tw-capitalize ${order.status === 'delivered' ? 'tw-bg-green-100 tw-text-green-800' :
-                          order.status === 'cancelled' ? 'tw-bg-red-100 tw-text-red-800' :
-                            'tw-bg-yellow-100 tw-text-yellow-800'
-                        }`}>
-                        {order.status}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="tw-text-center tw-py-6 tw-text-gray-500">
-                <Package className="tw-mx-auto tw-h-10 tw-w-10 tw-text-gray-300 tw-mb-2" />
-                <p>No orders yet</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+      <div className="row">
+        {/* Recent Orders */}
+        <div className="col-md-6">
+          <div style={{ border: '1px solid #eee', marginBottom: '30px' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 style={{ margin: 0, fontFamily: 'noto_sansbold', color: '#666' }}>Recent Orders</h4>
+              <Link href="/account/orders" style={{ color: '#f25648', fontSize: '13px', fontWeight: 'bold' }}>VIEW ALL</Link>
+            </div>
+            <div style={{ padding: '15px' }}>
+              {user?.orders && user.orders.length > 0 ? (
+                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                  {user.orders.map(order => (
+                    <li key={order.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f5f5f5' }}>
+                      <div>
+                        <p style={{ margin: 0, fontWeight: 'bold', color: '#555' }}>#{order.orderNumber}</p>
+                        <p style={{ margin: 0, fontSize: '12px', color: '#999' }}>{new Date(order.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <div className="text-right">
+                        <span style={{
+                          fontSize: '11px',
+                          fontWeight: 'bold',
+                          padding: '2px 8px',
+                          textTransform: 'uppercase',
+                          background: order.status === 'delivered' ? '#dff0d8' : order.status === 'cancelled' ? '#f2dede' : '#fcf8e3',
+                          color: order.status === 'delivered' ? '#3c763d' : order.status === 'cancelled' ? '#a94442' : '#8a6d3b'
+                        }}>
+                          {order.status}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-center" style={{ padding: '30px 0', color: '#ccc' }}>
+                  <Package size={48} style={{ marginBottom: '10px', opacity: 0.3 }} />
+                  <p style={{ fontSize: '14px' }}>No orders yet</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader className="tw-flex tw-flex-row tw-items-center tw-justify-between">
-            <CardTitle className="tw-text-lg">Default Address</CardTitle>
-            <Link href="/account/addresses">
-              <Button variant="link" className="tw-text-primary">Manage</Button>
-            </Link>
-          </CardHeader>
-          <CardContent>
-            {user?.addresses && user.addresses.length > 0 ? (
-              <div className="tw-text-sm tw-text-gray-600">
-                <p className="tw-font-medium tw-text-gray-900 tw-mb-1">{user.name}</p>
-                <p>{user.addresses[0].street}</p>
-                <p>{user.addresses[0].city}, {user.addresses[0].state}</p>
-                <p>{user.addresses[0].pincode}</p>
-                <p className="tw-mt-2">Phone: {user.phone}</p>
-              </div>
-            ) : (
-              <div className="tw-text-center tw-py-6 tw-text-gray-500">
-                <MapPin className="tw-mx-auto tw-h-10 tw-w-10 tw-text-gray-300 tw-mb-2" />
-                <p>No default address set</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Default Address */}
+        <div className="col-md-6">
+          <div style={{ border: '1px solid #eee', marginBottom: '30px' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h4 style={{ margin: 0, fontFamily: 'noto_sansbold', color: '#666' }}>Default Address</h4>
+              <Link href="/account/addresses" style={{ color: '#f25648', fontSize: '13px', fontWeight: 'bold' }}>MANAGE</Link>
+            </div>
+            <div style={{ padding: '15px' }}>
+              {user?.addresses && user.addresses.length > 0 ? (
+                <div style={{ fontSize: '14px', color: '#777', lineHeight: '1.6' }}>
+                  <p style={{ fontWeight: 'bold', color: '#555', marginBottom: '5px' }}>{user.name}</p>
+                  <p style={{ margin: 0 }}>{user.addresses[0].street}</p>
+                  <p style={{ margin: 0 }}>{user.addresses[0].city}, {user.addresses[0].state}</p>
+                  <p style={{ margin: 0 }}>{user.addresses[0].pincode}</p>
+                  <p style={{ marginTop: '10px', color: '#999' }}>Phone: {user.phone}</p>
+                </div>
+              ) : (
+                <div className="text-center" style={{ padding: '30px 0', color: '#ccc' }}>
+                  <MapPin size={48} style={{ marginBottom: '10px', opacity: 0.3 }} />
+                  <p style={{ fontSize: '14px' }}>No default address set</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

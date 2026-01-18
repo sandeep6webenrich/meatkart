@@ -27,54 +27,57 @@ export default async function OrdersPage() {
   const orders = user?.orders || []
 
   return (
-    <div className="tw-space-y-6">
-      <h2 className="tw-text-2xl tw-font-bold">My Orders</h2>
+    <div className="account-orders">
+      <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '24px', margin: '0 0 25px 0', textTransform: 'uppercase' }}>
+        My Orders
+      </h2>
 
-      <div className="tw-bg-white tw-rounded-xl tw-shadow-sm tw-border tw-overflow-hidden">
-        <div className="tw-overflow-x-auto">
-          <table className="tw-w-full tw-text-left tw-text-sm">
-            <thead className="tw-bg-gray-50 tw-border-b">
+      <div style={{ border: '1px solid #eee', background: '#fff' }}>
+        <div className="table-responsive">
+          <table className="table table-hover" style={{ margin: 0 }}>
+            <thead style={{ background: '#fcfcfc', borderBottom: '1px solid #eee' }}>
               <tr>
-                <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Order #</th>
-                <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Date</th>
-                <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Status</th>
-                <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500">Total</th>
-                <th className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-500 tw-text-right">Actions</th>
+                <th style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '13px', padding: '15px' }}>ORDER #</th>
+                <th style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '13px', padding: '15px' }}>DATE</th>
+                <th style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '13px', padding: '15px' }}>STATUS</th>
+                <th style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '13px', padding: '15px' }}>TOTAL</th>
+                <th style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '13px', padding: '15px' }} className="text-right">ACTIONS</th>
               </tr>
             </thead>
-            <tbody className="tw-divide-y">
+            <tbody>
               {orders.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="tw-px-6 tw-py-8 tw-text-center tw-text-gray-500">
+                  <td colSpan={5} className="text-center" style={{ padding: '40px', color: '#999' }}>
                     No orders found.
                   </td>
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr key={order.id} className="hover:tw-bg-gray-50 tw-transition-colors">
-                    <td className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900">
+                  <tr key={order.id} style={{ borderBottom: '1px solid #f5f5f5' }}>
+                    <td style={{ padding: '15px', color: '#555', fontWeight: 'bold' }}>
                       {order.orderNumber}
                     </td>
-                    <td className="tw-px-6 tw-py-4 tw-text-gray-600">
+                    <td style={{ padding: '15px', color: '#777', fontSize: '13px' }}>
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="tw-px-6 tw-py-4">
-                      <span className={`tw-inline-flex tw-items-center tw-px-2.5 tw-py-0.5 tw-rounded-full tw-text-xs tw-font-medium tw-capitalize ${
-                        order.status === 'delivered' ? 'tw-bg-green-100 tw-text-green-800' :
-                        order.status === 'cancelled' ? 'tw-bg-red-100 tw-text-red-800' :
-                        'tw-bg-yellow-100 tw-text-yellow-800'
-                      }`}>
+                    <td style={{ padding: '15px' }}>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                        padding: '2px 8px',
+                        textTransform: 'uppercase',
+                        background: order.status === 'delivered' ? '#dff0d8' : order.status === 'cancelled' ? '#f2dede' : '#fcf8e3',
+                        color: order.status === 'delivered' ? '#3c763d' : order.status === 'cancelled' ? '#a94442' : '#8a6d3b'
+                      }}>
                         {order.status}
                       </span>
                     </td>
-                    <td className="tw-px-6 tw-py-4 tw-font-medium tw-text-gray-900">
+                    <td style={{ padding: '15px', color: '#333', fontWeight: 'bold' }}>
                       ₹{Number(order.totalAmount).toFixed(2)}
                     </td>
-                    <td className="tw-px-6 tw-py-4 tw-text-right">
-                      <Link href={`/account/orders/${order.id}`}>
-                        <Button variant="ghost" size="sm" className="tw-text-primary">
-                          View Details
-                        </Button>
+                    <td style={{ padding: '15px' }} className="text-right">
+                      <Link href={`/account/orders/${order.id}`} style={{ color: '#f25648', fontSize: '12px', fontWeight: 'bold' }}>
+                        VIEW DETAILS
                       </Link>
                     </td>
                   </tr>

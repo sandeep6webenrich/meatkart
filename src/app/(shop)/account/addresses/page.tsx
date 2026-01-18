@@ -25,23 +25,29 @@ export default async function AddressesPage() {
   const addresses = user?.addresses || []
 
   return (
-    <div className="tw-space-y-6">
-      <div className="tw-flex tw-items-center tw-justify-between">
-        <h2 className="tw-text-2xl tw-font-bold">My Addresses</h2>
+    <div className="account-addresses">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+        <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '24px', margin: 0, textTransform: 'uppercase' }}>
+          My Addresses
+        </h2>
         <AddAddressDialog />
       </div>
 
-      <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-6">
+      <div className="row">
         {addresses.length === 0 ? (
-          <div className="tw-col-span-full tw-text-center tw-py-12 tw-bg-white tw-rounded-xl tw-border tw-border-dashed">
-            <MapPin className="tw-mx-auto tw-h-12 tw-w-12 tw-text-gray-300 tw-mb-3" />
-            <h3 className="tw-text-lg tw-font-medium tw-text-gray-900">No addresses found</h3>
-            <p className="tw-text-gray-500 tw-mb-4">Add a shipping address to speed up checkout.</p>
-            <AddAddressDialog />
+          <div className="col-md-12">
+            <div className="text-center" style={{ border: '2px dashed #eee', padding: '50px 0', background: '#fff' }}>
+              <MapPin size={48} color="#ccc" style={{ marginBottom: '15px' }} />
+              <h3 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '18px' }}>No addresses found</h3>
+              <p style={{ color: '#999', fontSize: '14px', marginBottom: '20px' }}>Add a shipping address to speed up checkout.</p>
+              <AddAddressDialog />
+            </div>
           </div>
         ) : (
           addresses.map((address) => (
-            <AddressCard key={address.id} address={address} userName={user?.name || ''} />
+            <div key={address.id} className="col-md-6" style={{ marginBottom: '30px' }}>
+              <AddressCard address={address} userName={user?.name || ''} />
+            </div>
           ))
         )}
       </div>

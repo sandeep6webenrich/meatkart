@@ -30,61 +30,70 @@ export default async function WalletPage() {
   const transactions = user?.wallet?.transactions || []
 
   return (
-    <div className="tw-space-y-6">
-      <h2 className="tw-text-2xl tw-font-bold">My Wallet</h2>
+    <div className="account-wallet">
+      <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '24px', margin: '0 0 25px 0', textTransform: 'uppercase' }}>
+        My Wallet
+      </h2>
 
-      <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-3 tw-gap-6">
-        <Card className="md:tw-col-span-1 tw-bg-gradient-to-br tw-from-primary tw-to-red-700 tw-text-white tw-border-none">
-          <CardContent className="tw-p-6">
-            <div className="tw-flex tw-items-center tw-justify-between tw-mb-4">
-               <Wallet className="tw-h-8 tw-w-8 tw-opacity-80" />
-               <span className="tw-text-xs tw-bg-white/20 tw-px-2 tw-py-1 tw-rounded">Active</span>
+      <div className="row">
+        {/* Balance Card */}
+        <div className="col-md-4" style={{ marginBottom: '30px' }}>
+          <div style={{ background: '#f25648', color: '#fff', padding: '30px', position: 'relative', overflow: 'hidden' }}>
+            <Wallet size={48} style={{ position: 'absolute', bottom: '-10px', right: '-10px', opacity: 0.2, transform: 'rotate(-15deg)' }} />
+            <p style={{ margin: 0, fontSize: '13px', textTransform: 'uppercase', opacity: 0.9 }}>Available Balance</p>
+            <h3 style={{ margin: '10px 0', fontSize: '32px', fontFamily: 'noto_sansbold' }}>₹{Number(balance).toFixed(2)}</h3>
+            <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid rgba(255,255,255,0.2)', fontSize: '11px', opacity: 0.8 }}>
+              Use this balance for your next purchase.
             </div>
-            <p className="tw-text-sm tw-opacity-80 tw-mb-1">Available Balance</p>
-            <h3 className="tw-text-3xl tw-font-bold">₹{Number(balance).toFixed(2)}</h3>
-            <div className="tw-mt-6 tw-pt-4 tw-border-t tw-border-white/20">
-                <p className="tw-text-xs tw-opacity-80">Use this balance for your next purchase.</p>
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card className="md:tw-col-span-2">
-            <CardHeader>
-                <CardTitle className="tw-flex tw-items-center tw-gap-2">
-                    <History size={20} /> Transaction History
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                {transactions.length === 0 ? (
-                    <div className="tw-text-center tw-py-8 tw-text-gray-500">
-                        <p>No transactions yet</p>
+        {/* History Card */}
+        <div className="col-md-8">
+          <div style={{ border: '1px solid #eee', background: '#fff' }}>
+            <div style={{ padding: '15px', borderBottom: '1px solid #eee', background: '#fcfcfc' }}>
+              <h4 style={{ margin: 0, fontFamily: 'noto_sansbold', color: '#666', fontSize: '16px' }}>
+                <History size={18} style={{ marginRight: '8px', verticalAlign: 'text-bottom' }} />
+                TRANSACTION HISTORY
+              </h4>
+            </div>
+            <div style={{ padding: '20px' }}>
+              {transactions.length === 0 ? (
+                <div className="text-center" style={{ padding: '40px 0', color: '#999' }}>
+                  <p>No transactions yet</p>
+                </div>
+              ) : (
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                  {transactions.map((tx) => (
+                    <div key={tx.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 0', borderBottom: '1px solid #f5f5f5' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div style={{
+                          width: '40px',
+                          height: '40px',
+                          borderRadius: '50%',
+                          background: tx.type === 'credit' ? '#e9f5e9' : '#f9eded',
+                          color: tx.type === 'credit' ? '#3fb73f' : '#f25648',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}>
+                          {tx.type === 'credit' ? <ArrowDownLeft size={18} /> : <ArrowUpRight size={18} />}
+                        </div>
+                        <div>
+                          <p style={{ margin: 0, color: '#555', fontSize: '14px', fontWeight: 'bold' }}>{tx.description || 'Transaction'}</p>
+                          <p style={{ margin: 0, color: '#999', fontSize: '12px' }}>{new Date(tx.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <span style={{ fontWeight: 'bold', fontSize: '15px', color: tx.type === 'credit' ? '#3fb73f' : '#333' }}>
+                        {tx.type === 'credit' ? '+' : '-'}₹{Number(tx.amount).toFixed(2)}
+                      </span>
                     </div>
-                ) : (
-                    <div className="tw-space-y-4">
-                        {transactions.map((tx) => (
-                            <div key={tx.id} className="tw-flex tw-items-center tw-justify-between tw-border-b tw-pb-3 last:tw-border-0 last:tw-pb-0">
-                                <div className="tw-flex tw-items-center tw-gap-3">
-                                    <div className={`tw-p-2 tw-rounded-full ${
-                                        tx.type === 'credit' ? 'tw-bg-green-100 tw-text-green-600' : 'tw-bg-red-100 tw-text-red-600'
-                                    }`}>
-                                        {tx.type === 'credit' ? <ArrowDownLeft size={16} /> : <ArrowUpRight size={16} />}
-                                    </div>
-                                    <div>
-                                        <p className="tw-font-medium tw-text-sm">{tx.description || 'Transaction'}</p>
-                                        <p className="tw-text-xs tw-text-gray-500">{new Date(tx.createdAt).toLocaleDateString()}</p>
-                                    </div>
-                                </div>
-                                <span className={`tw-font-medium ${
-                                    tx.type === 'credit' ? 'tw-text-green-600' : 'tw-text-gray-900'
-                                }`}>
-                                    {tx.type === 'credit' ? '+' : '-'}₹{Number(tx.amount).toFixed(2)}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </CardContent>
-        </Card>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

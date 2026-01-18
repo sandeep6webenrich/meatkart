@@ -43,54 +43,59 @@ export default async function WishlistPage() {
   const wishlistItems = user?.wishlist?.items || []
 
   return (
-    <div className="tw-space-y-6">
-      <h2 className="tw-text-2xl tw-font-bold">My Wishlist</h2>
+    <div className="account-wishlist">
+      <h2 style={{ fontFamily: 'noto_sansbold', color: '#666', fontSize: '24px', margin: '0 0 25px 0', textTransform: 'uppercase' }}>
+        My Wishlist
+      </h2>
 
       {wishlistItems.length === 0 ? (
-        <div className="tw-text-center tw-py-12 tw-bg-white tw-rounded-xl tw-border tw-border-dashed">
-            <Heart className="tw-mx-auto tw-h-12 tw-w-12 tw-text-gray-300 tw-mb-3" />
-            <h3 className="tw-text-lg tw-font-medium tw-text-gray-900">Your wishlist is empty</h3>
-            <p className="tw-text-gray-500 tw-mb-4">Save items you want to buy later.</p>
-            <Link href="/">
-                <Button>Continue Shopping</Button>
-            </Link>
+        <div className="text-center" style={{ border: '2px dashed #eee', padding: '50px 0', background: '#fff' }}>
+          <Heart size={48} color="#ccc" style={{ marginBottom: '15px' }} />
+          <h3 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '18px' }}>Your wishlist is empty</h3>
+          <p style={{ color: '#999', fontSize: '14px', marginBottom: '20px' }}>Save items you want to buy later.</p>
+          <Link href="/">
+            <button className="btn btn-danger" style={{ borderRadius: 0, background: '#f25648', borderColor: '#f25648', padding: '10px 25px', fontWeight: 'bold' }}>
+              CONTINUE SHOPPING
+            </button>
+          </Link>
         </div>
       ) : (
-        <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 tw-gap-6">
-            {wishlistItems.map((item) => {
-                const product = item.product
-                const image = product.productImages[0]?.imageUrl || '/images/placeholder.png'
-                const price = product.productWeights[0]?.price || 0
-                
-                return (
-                    <Card key={item.id} className="tw-overflow-hidden tw-group">
-                        <div className="tw-relative tw-aspect-square tw-bg-gray-100">
-                             {/* Use a simple img tag if Image component has domain issues, or configure next.config.js */}
-                            <img 
-                                src={image} 
-                                alt={product.name}
-                                className="tw-object-cover tw-w-full tw-h-full"
-                            />
-                            <button className="tw-absolute tw-top-2 tw-right-2 tw-p-2 tw-bg-white tw-rounded-full tw-shadow-sm tw-text-red-500 hover:tw-bg-red-50">
-                                <Heart size={16} fill="currentColor" />
-                            </button>
-                        </div>
-                        <CardContent className="tw-p-4">
-                            <Link href={`/product/${product.slug}`}>
-                                <h3 className="tw-font-medium tw-text-gray-900 tw-truncate hover:tw-text-primary tw-transition-colors">
-                                    {product.name}
-                                </h3>
-                            </Link>
-                            <div className="tw-mt-2 tw-flex tw-items-center tw-justify-between">
-                                <span className="tw-font-bold">₹{Number(price).toFixed(2)}</span>
-                                <Button size="sm" variant="secondary" className="tw-h-8">
-                                    <ShoppingCart size={14} className="tw-mr-1" /> Add
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                )
-            })}
+        <div className="row">
+          {wishlistItems.map((item) => {
+            const product = item.product
+            const image = product.productImages[0]?.imageUrl || '/images/no-image.png'
+            const price = product.productWeights[0]?.price || 0
+
+            return (
+              <div key={item.id} className="col-md-4 col-sm-6" style={{ marginBottom: '30px' }}>
+                <div style={{ border: '1px solid #eee', background: '#fff' }}>
+                  <div style={{ position: 'relative', paddingBottom: '100%', overflow: 'hidden', background: '#f9f9f9' }}>
+                    <img
+                      src={image}
+                      alt={product.name}
+                      style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                    <button style={{ position: 'absolute', top: '10px', right: '10px', background: '#fff', border: 'none', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f25648', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+                      <Heart size={16} fill="currentColor" />
+                    </button>
+                  </div>
+                  <div style={{ padding: '15px' }}>
+                    <Link href={`/product/${product.slug}`} style={{ textDecoration: 'none' }}>
+                      <h4 style={{ color: '#666', fontFamily: 'noto_sansbold', fontSize: '15px', margin: '0 0 10px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {product.name}
+                      </h4>
+                    </Link>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: '#333', fontWeight: 'bold', fontSize: '16px' }}>₹{Number(price).toFixed(2)}</span>
+                      <button className="btn btn-default" style={{ borderRadius: 0, fontSize: '11px', fontWeight: 'bold', background: '#fcfcfc' }}>
+                        <ShoppingCart size={12} style={{ marginRight: '5px' }} /> ADD
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
     </div>

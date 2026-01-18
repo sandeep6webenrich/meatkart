@@ -41,28 +41,87 @@ export function ProfileForm({ user }: ProfileFormProps) {
         }
     }
 
+    const inputStyle = {
+        height: '45px',
+        borderRadius: '0',
+        border: '1px solid #e5e5e5',
+        boxShadow: 'none',
+        fontFamily: 'noto_sansregular',
+        fontSize: '14px'
+    }
+
+    const labelStyle = {
+        fontFamily: 'noto_sansbold',
+        color: '#666',
+        fontSize: '13px',
+        marginBottom: '8px',
+        fontWeight: 'normal' as const
+    }
+
+    const buttonStyle = {
+        background: '#f25648',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '0',
+        fontSize: '15px',
+        fontWeight: 'bold' as const,
+        textTransform: 'uppercase' as const,
+        padding: '10px 25px',
+        fontFamily: 'noto_sansbold'
+    }
+
     return (
-        <form action={handleSubmit} className="tw-space-y-4">
-            <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
-                <div className="tw-space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" name="name" defaultValue={user.name} placeholder="Enter your name" disabled={loading} />
+        <form action={handleSubmit}>
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="name" style={labelStyle}>FULL NAME</label>
+                        <input
+                            id="name"
+                            name="name"
+                            className="form-control"
+                            defaultValue={user.name}
+                            placeholder="Enter your name"
+                            disabled={loading}
+                            style={inputStyle}
+                        />
+                    </div>
                 </div>
-                <div className="tw-space-y-2">
-                    <Label htmlFor="email">Email Address</Label>
-                    <Input id="email" name="email" defaultValue={user.email || ''} readOnly className="tw-bg-gray-50" />
-                    <p className="tw-text-xs tw-text-gray-500">Email cannot be changed directly.</p>
-                </div>
-                <div className="tw-space-y-2">
-                    <Label htmlFor="phone">Mobile Number</Label>
-                    <Input id="phone" name="phone" defaultValue={user.phone} disabled={loading} />
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="email" style={labelStyle}>EMAIL ADDRESS</label>
+                        <input
+                            id="email"
+                            name="email"
+                            className="form-control"
+                            defaultValue={user.email || ''}
+                            readOnly
+                            style={{ ...inputStyle, background: '#f9f9f9', color: '#999' }}
+                        />
+                        <p style={{ color: '#999', fontSize: '11px', marginTop: '5px' }}>Email cannot be changed directly.</p>
+                    </div>
                 </div>
             </div>
-            <div className="tw-pt-4">
-                <Button type="submit" disabled={loading}>
-                    {loading && <Loader2 className="tw-mr-2 tw-h-4 tw-w-4 tw-animate-spin" />}
-                    Save Changes
-                </Button>
+            <div className="row">
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="phone" style={labelStyle}>MOBILE NUMBER</label>
+                        <input
+                            id="phone"
+                            name="phone"
+                            className="form-control"
+                            defaultValue={user.phone}
+                            disabled={loading}
+                            style={inputStyle}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div style={{ marginTop: '20px' }}>
+                <button type="submit" className="btn btn-danger" style={buttonStyle} disabled={loading}>
+                    {loading ? 'SAVING...' : 'SAVE CHANGES'}
+                </button>
             </div>
         </form>
     )

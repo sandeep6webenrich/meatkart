@@ -34,35 +34,40 @@ export function AccountSidebar() {
   }
 
   return (
-    <div className="tw-bg-white tw-rounded-xl tw-shadow-sm tw-border tw-p-4 tw-h-fit">
-      <div className="tw-space-y-1">
+    <div className="product-list no-gutter">
+      <h2>MY ACCOUNT</h2>
+      <ul className="mutton-menu-list">
         {links.map((link) => {
-          const Icon = link.icon
           const isActive = pathname === link.href
 
           return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`tw-flex tw-items-center tw-gap-3 tw-px-4 tw-py-3 tw-rounded-lg tw-transition-colors ${isActive
-                  ? 'tw-bg-red-50 tw-text-primary tw-font-medium'
-                  : 'tw-text-gray-600 hover:tw-bg-gray-50 hover:tw-text-gray-900'
-                }`}
-            >
-              <Icon size={18} />
-              {link.label}
-            </Link>
+            <li key={link.href} className={isActive ? 'active' : ''}>
+              <span>&#9679;</span>
+              <Link href={link.href}>
+                {link.label}
+              </Link>
+            </li>
           )
         })}
 
-        <button
-          onClick={handleLogout}
-          className="tw-w-full tw-flex tw-items-center tw-gap-3 tw-px-4 tw-py-3 tw-rounded-lg tw-text-gray-600 hover:tw-bg-red-50 hover:tw-text-red-600 tw-transition-colors tw-mt-4 tw-border-t"
-        >
-          <LogOut size={18} />
-          Sign Out
-        </button>
-      </div>
+        <li style={{ marginTop: '10px', borderTop: '1px solid #ececec', paddingTop: '10px' }}>
+          <span>&#9679;</span>
+          <button
+            onClick={handleLogout}
+            style={{
+              background: 'none',
+              border: 'none',
+              paddingLeft: '20px',
+              fontSize: '15px',
+              color: '#666666',
+              fontFamily: 'noto_sansregular',
+              cursor: 'pointer'
+            }}
+          >
+            Sign Out
+          </button>
+        </li>
+      </ul>
     </div>
   )
 }
